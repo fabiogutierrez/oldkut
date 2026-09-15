@@ -3,8 +3,22 @@
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import NotificationBell from '@/components/NotificationBell';
 
-export default function OldkutHeader({ username }: { username?: string | null }) {
+interface PendingRequest {
+  userId: string;
+  username: string;
+  displayName: string;
+  photoUrl: string | null;
+}
+
+export default function OldkutHeader({
+  username,
+  pendingRequests = [],
+}: {
+  username?: string | null;
+  pendingRequests?: PendingRequest[];
+}) {
   const router = useRouter();
 
   const handleLogout = async () => {
@@ -22,6 +36,7 @@ export default function OldkutHeader({ username }: { username?: string | null })
       <div className="oldkut-topbar-right">
         {username ? (
           <>
+            <NotificationBell initialRequests={pendingRequests} />
             <Link href={`/perfil/${username}`}>meu perfil</Link>
             <button type="button" onClick={handleLogout}>
               sair

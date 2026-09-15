@@ -4,7 +4,6 @@ import ProfileCard from '@/components/ProfileCard';
 import ScrapWall from '@/components/ScrapWall';
 import FriendButton from '@/components/FriendButton';
 import FriendsList from '@/components/FriendsList';
-import FriendRequests from '@/components/FriendRequests';
 
 interface ScrapAuthor {
   username: string | null;
@@ -83,20 +82,6 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     .filter((f): f is FriendProfile => f !== null)
     .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
 
-  let pendingRequests: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
-  if (isOwnProfile) {
-    const { data: pendingRaw } = await supabase
-      .from('oldkut_friendships')
-      .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
-      .eq('addressee_user_id', profile.user_id)
-      .eq('status', 'pending');
-
-    pendingRequests = ((pendingRaw as unknown as { requester: FriendProfile | null }[] | null) ?? [])
-      .map((r) => r.requester)
-      .filter((f): f is FriendProfile => f !== null)
-      .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
-  }
-
   let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
   if (user && !isOwnProfile) {
     const { data: rel } = await supabase
@@ -123,7 +108,6 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
             </div>
           </div>
         )}
-        {isOwnProfile && <FriendRequests requests={pendingRequests} />}
         <FriendsList friends={friends} />
       </div>
       <div className="oldkut-main">
