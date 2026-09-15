@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import ProfileCard from '@/components/ProfileCard';
 import ScrapWall from '@/components/ScrapWall';
+import TestimonialWall from '@/components/TestimonialWall';
 import FriendButton from '@/components/FriendButton';
 import FriendsList from '@/components/FriendsList';
 
@@ -62,6 +63,25 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     canPost = !!viewerProfile;
   }
 
+  const { data: testimonialsRaw } = await supabase
+    .from('oldkut_testimonials')
+    .select(
+      'id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_testimonials_author_user_id_fkey(username, display_name, photo_url)'
+    )
+    .eq('profile_user_id', profile.user_id)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  const testimonials = ((testimonialsRaw as unknown as ScrapRow[]) ?? []).map((t) => ({
+    id: t.id,
+    message: t.message,
+    createdAt: t.created_at,
+    authorUserId: t.author_user_id,
+    authorUsername: t.author?.username ?? '',
+    authorDisplayName: t.author?.display_name ?? '?',
+    authorPhotoUrl: t.author?.photo_url ?? null,
+  }));
+
   const [{ data: asRequester }, { data: asAddressee }] = await Promise.all([
     supabase
       .from('oldkut_friendships')
@@ -111,6 +131,13 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
         <FriendsList friends={friends} />
       </div>
       <div className="oldkut-main">
+        <TestimonialWall
+          profileUserId={profile.user_id}
+          initialTestimonials={testimonials}
+          currentUserId={user?.id ?? null}
+          isOwnProfile={isOwnProfile}
+          canWrite={canPost && !isOwnProfile}
+        />
         <ScrapWall
           profileUserId={profile.user_id}
           initialScraps={scraps}

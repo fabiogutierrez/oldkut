@@ -2,24 +2,18 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import type { Notification } from '@/lib/notifications';
 
-interface PendingRequest {
-  userId: string;
-  username: string;
-  displayName: string;
-  photoUrl: string | null;
-}
-
-export default function NotificationBell({ initialRequests }: { initialRequests: PendingRequest[] }) {
+export default function NotificationBell({ initialNotifications }: { initialNotifications: Notification[] }) {
   const router = useRouter();
-  const [requests, setRequests] = useState(initialRequests);
+  const [notifications, setNotifications] = useState(initialNotifications);
   const [open, setOpen] = useState(false);
-  const [busyUserId, setBusyUserId] = useState<string | null>(null);
+  const [busyKey, setBusyKey] = useState<string | null>(null);
   const panelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setRequests(initialRequests);
-  }, [initialRequests]);
+    setNotifications(initialNotifications);
+  }, [initialNotifications]);
 
   useEffect(() => {
     if (!open) return;
@@ -32,25 +26,55 @@ export default function NotificationBell({ initialRequests }: { initialRequests:
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [open]);
 
-  const handleAccept = async (requesterUserId: string) => {
-    setBusyUserId(requesterUserId);
+  const removeFriendRequest = (userId: string) => {
+    setNotifications((prev) => prev.filter((n) => !(n.type === 'friend_request' && n.userId === userId)));
+  };
+
+  const removeTestimonial = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => !(n.type === 'testimonial' && n.id === id)));
+  };
+
+  const handleAcceptFriend = async (requesterUserId: string) => {
+    setBusyKey(requesterUserId);
     const res = await fetch('/api/friends', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ requesterUserId }),
     });
-    setBusyUserId(null);
+    setBusyKey(null);
     if (!res.ok) return;
-    setRequests((prev) => prev.filter((r) => r.userId !== requesterUserId));
+    removeFriendRequest(requesterUserId);
     router.refresh();
   };
 
-  const handleReject = async (requesterUserId: string) => {
-    setBusyUserId(requesterUserId);
+  const handleRejectFriend = async (requesterUserId: string) => {
+    setBusyKey(requesterUserId);
     const res = await fetch(`/api/friends?userId=${requesterUserId}`, { method: 'DELETE' });
-    setBusyUserId(null);
+    setBusyKey(null);
     if (!res.ok) return;
-    setRequests((prev) => prev.filter((r) => r.userId !== requesterUserId));
+    removeFriendRequest(requesterUserId);
+    router.refresh();
+  };
+
+  const handleApproveTestimonial = async (id: string) => {
+    setBusyKey(id);
+    const res = await fetch('/api/testimonials', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id }),
+    });
+    setBusyKey(null);
+    if (!res.ok) return;
+    removeTestimonial(id);
+    router.refresh();
+  };
+
+  const handleRejectTestimonial = async (id: string) => {
+    setBusyKey(id);
+    const res = await fetch(`/api/testimonials?id=${id}`, { method: 'DELETE' });
+    setBusyKey(null);
+    if (!res.ok) return;
+    removeTestimonial(id);
     router.refresh();
   };
 
@@ -58,46 +82,83 @@ export default function NotificationBell({ initialRequests }: { initialRequests:
     <div className="oldkut-notif" ref={panelRef}>
       <button type="button" className="oldkut-notif-btn" onClick={() => setOpen((v) => !v)} aria-label="Notificações">
         🔔
-        {requests.length > 0 && <span className="oldkut-notif-badge">{requests.length}</span>}
+        {notifications.length > 0 && <span className="oldkut-notif-badge">{notifications.length}</span>}
       </button>
 
       {open && (
         <div className="oldkut-notif-panel">
-          <div className="oldkut-box-title">Pedidos de amizade</div>
-          {requests.length === 0 ? (
+          <div className="oldkut-box-title">Notificações</div>
+          {notifications.length === 0 ? (
             <p className="oldkut-notif-empty">Nenhuma notificação.</p>
           ) : (
             <div className="oldkut-notif-list">
-              {requests.map((r) => (
-                <div key={r.userId} className="oldkut-request-row">
-                  {r.photoUrl ? (
-                    <img src={r.photoUrl} alt={r.displayName} className="oldkut-request-avatar" />
-                  ) : (
-                    <div className="oldkut-request-avatar">{r.displayName?.[0]?.toUpperCase() ?? '?'}</div>
-                  )}
-                  <a href={`/perfil/${r.username}`} className="oldkut-request-name">
-                    {r.displayName}
-                  </a>
-                  <div className="oldkut-request-actions">
-                    <button
-                      type="button"
-                      className="oldkut-btn"
-                      disabled={busyUserId === r.userId}
-                      onClick={() => handleAccept(r.userId)}
-                    >
-                      Aceitar
-                    </button>
-                    <button
-                      type="button"
-                      className="oldkut-btn"
-                      disabled={busyUserId === r.userId}
-                      onClick={() => handleReject(r.userId)}
-                    >
-                      Recusar
-                    </button>
+              {notifications.map((n) =>
+                n.type === 'friend_request' ? (
+                  <div key={`friend-${n.userId}`} className="oldkut-request-row">
+                    {n.photoUrl ? (
+                      <img src={n.photoUrl} alt={n.displayName} className="oldkut-request-avatar" />
+                    ) : (
+                      <div className="oldkut-request-avatar">{n.displayName?.[0]?.toUpperCase() ?? '?'}</div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <a href={`/perfil/${n.username}`} className="oldkut-request-name" style={{ display: 'block' }}>
+                        {n.displayName}
+                      </a>
+                      <span className="oldkut-notif-kind">quer ser seu amigo</span>
+                    </div>
+                    <div className="oldkut-request-actions">
+                      <button
+                        type="button"
+                        className="oldkut-btn"
+                        disabled={busyKey === n.userId}
+                        onClick={() => handleAcceptFriend(n.userId)}
+                      >
+                        Aceitar
+                      </button>
+                      <button
+                        type="button"
+                        className="oldkut-btn"
+                        disabled={busyKey === n.userId}
+                        onClick={() => handleRejectFriend(n.userId)}
+                      >
+                        Recusar
+                      </button>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ) : (
+                  <div key={`testimonial-${n.id}`} className="oldkut-request-row">
+                    {n.authorPhotoUrl ? (
+                      <img src={n.authorPhotoUrl} alt={n.authorDisplayName} className="oldkut-request-avatar" />
+                    ) : (
+                      <div className="oldkut-request-avatar">{n.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
+                    )}
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <a href={`/perfil/${n.authorUsername}`} className="oldkut-request-name" style={{ display: 'block' }}>
+                        {n.authorDisplayName}
+                      </a>
+                      <span className="oldkut-notif-kind">deixou um depoimento: &quot;{n.message}&quot;</span>
+                    </div>
+                    <div className="oldkut-request-actions">
+                      <button
+                        type="button"
+                        className="oldkut-btn"
+                        disabled={busyKey === n.id}
+                        onClick={() => handleApproveTestimonial(n.id)}
+                      >
+                        Aprovar
+                      </button>
+                      <button
+                        type="button"
+                        className="oldkut-btn"
+                        disabled={busyKey === n.id}
+                        onClick={() => handleRejectTestimonial(n.id)}
+                      >
+                        Recusar
+                      </button>
+                    </div>
+                  </div>
+                )
+              )}
             </div>
           )}
         </div>
