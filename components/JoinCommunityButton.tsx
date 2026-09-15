@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 export default function JoinCommunityButton({
   communityId,
@@ -11,6 +12,7 @@ export default function JoinCommunityButton({
   initialIsMember: boolean;
 }) {
   const router = useRouter();
+  const { t } = useLocale();
   const [isMember, setIsMember] = useState(initialIsMember);
   const [submitting, setSubmitting] = useState(false);
 
@@ -39,14 +41,14 @@ export default function JoinCommunityButton({
   if (isMember) {
     return (
       <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleLeave}>
-        Sair da comunidade
+        {t('community.leave')}
       </button>
     );
   }
 
   return (
     <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleJoin}>
-      Participar
+      {t('community.join')}
     </button>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, type ChangeEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 const MAX_SIZE = 5 * 1024 * 1024;
 
@@ -14,6 +15,7 @@ export default function AvatarUpload({
   value: string | null;
   onChange: (url: string | null) => void;
 }) {
+  const { t } = useLocale();
   const [supabase] = useState(() => createClient());
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,11 +28,11 @@ export default function AvatarUpload({
     setError(null);
 
     if (!file.type.startsWith('image/')) {
-      setError('Escolha um arquivo de imagem.');
+      setError(t('avatar.errorType'));
       return;
     }
     if (file.size > MAX_SIZE) {
-      setError('A imagem deve ter no máximo 5MB.');
+      setError(t('avatar.errorSize'));
       return;
     }
 
@@ -42,7 +44,7 @@ export default function AvatarUpload({
     setUploading(false);
 
     if (uploadError) {
-      setError('Não foi possível enviar a imagem.');
+      setError(t('avatar.errorUpload'));
       return;
     }
 
@@ -62,7 +64,7 @@ export default function AvatarUpload({
         )}
         <div>
           <label className="oldkut-btn" style={{ display: 'inline-block', cursor: uploading ? 'default' : 'pointer' }}>
-            {uploading ? 'Enviando...' : value ? 'Trocar foto' : 'Escolher foto'}
+            {uploading ? t('avatar.uploading') : value ? t('avatar.change') : t('avatar.choose')}
             <input
               type="file"
               accept="image/*"
@@ -78,7 +80,7 @@ export default function AvatarUpload({
               style={{ display: 'block', marginTop: 6 }}
               onClick={() => onChange(null)}
             >
-              remover foto
+              {t('avatar.remove')}
             </button>
           )}
         </div>

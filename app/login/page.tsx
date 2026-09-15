@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { isAtLeast18 } from '@/lib/age';
 import { COUNTRIES } from '@/lib/countries';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 export default function LoginPage() {
   return (
@@ -18,6 +19,7 @@ function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const authError = searchParams.get('error');
+  const { t } = useLocale();
 
   const [supabase] = useState(() => createClient());
   const [mode, setMode] = useState<'signup' | 'signin'>('signin');
@@ -25,7 +27,7 @@ function LoginForm() {
   const [password, setPassword] = useState('');
   const [birthday, setBirthday] = useState('');
   const [country, setCountry] = useState('');
-  const [error, setError] = useState<string | null>(authError ? 'Não foi possível confirmar seu login. Tente de novo.' : null);
+  const [error, setError] = useState<string | null>(authError ? t('auth.errorAuth') : null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -43,21 +45,21 @@ function LoginForm() {
 
     const trimmedEmail = email.trim();
     if (!trimmedEmail || !password) {
-      setError('Preencha e-mail e senha.');
+      setError(t('auth.errorFillFields'));
       return;
     }
 
     if (mode === 'signup') {
       if (!birthday) {
-        setError('Informe sua data de nascimento.');
+        setError(t('auth.errorBirthday'));
         return;
       }
       if (!isAtLeast18(birthday)) {
-        setError('Você precisa ter 18 anos ou mais para criar uma conta no oldkut.');
+        setError(t('auth.errorAge'));
         return;
       }
       if (!country) {
-        setError('Selecione o seu país.');
+        setError(t('auth.errorCountry'));
         return;
       }
     }
@@ -77,7 +79,7 @@ function LoginForm() {
         return;
       }
 
-      setNotice('Conta criada! Verifique seu e-mail pra confirmar o cadastro antes de entrar.');
+      setNotice(t('auth.signupSuccess'));
       return;
     }
 
@@ -85,7 +87,7 @@ function LoginForm() {
     setSubmitting(false);
 
     if (signInError) {
-      setError('E-mail ou senha inválidos.');
+      setError(t('auth.errorInvalid'));
       return;
     }
 
@@ -95,44 +97,44 @@ function LoginForm() {
 
   return (
     <div className="oldkut-box" style={{ maxWidth: 380, margin: '30px auto' }}>
-      <div className="oldkut-box-title">{mode === 'signup' ? 'Criar conta' : 'Entrar'}</div>
+      <div className="oldkut-box-title">{mode === 'signup' ? t('auth.signup') : t('auth.login')}</div>
       <div className="oldkut-box-body">
         <button type="button" className="oldkut-btn oldkut-google-btn" onClick={handleGoogle}>
-          Entrar com Google
+          {t('auth.google')}
         </button>
-        <div className="oldkut-divider">ou</div>
+        <div className="oldkut-divider">{t('auth.or')}</div>
 
         <div className="oldkut-tabs">
           <button type="button" className={mode === 'signin' ? 'active' : ''} onClick={() => setMode('signin')}>
-            Entrar
+            {t('auth.login')}
           </button>
           <button type="button" className={mode === 'signup' ? 'active' : ''} onClick={() => setMode('signup')}>
-            Criar conta
+            {t('auth.signup')}
           </button>
         </div>
 
         <form className="oldkut-form" onSubmit={handleSubmit}>
-          <label htmlFor="email">E-mail</label>
+          <label htmlFor="email">{t('auth.email')}</label>
           <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="voce@email.com" />
 
-          <label htmlFor="password">Senha</label>
+          <label htmlFor="password">{t('auth.password')}</label>
           <input
             id="password"
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder={mode === 'signup' ? 'Crie uma senha' : 'Sua senha'}
+            placeholder={mode === 'signup' ? t('auth.passwordPlaceholderSignup') : t('auth.passwordPlaceholderSignin')}
           />
 
           {mode === 'signup' && (
             <>
-              <label htmlFor="birthday">Data de nascimento</label>
+              <label htmlFor="birthday">{t('auth.birthday')}</label>
               <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
-              <p className="oldkut-hint">É preciso ter 18 anos ou mais pra usar o oldkut.</p>
+              <p className="oldkut-hint">{t('auth.ageHint')}</p>
 
-              <label htmlFor="country">País</label>
+              <label htmlFor="country">{t('auth.country')}</label>
               <select id="country" value={country} onChange={(e) => setCountry(e.target.value)}>
-                <option value="">Selecione...</option>
+                <option value="">{t('auth.selectCountry')}</option>
                 {COUNTRIES.map((c) => (
                   <option key={c} value={c}>
                     {c}
@@ -147,7 +149,7 @@ function LoginForm() {
 
           <div style={{ marginTop: 12 }}>
             <button type="submit" className="oldkut-btn" disabled={submitting}>
-              {submitting ? 'Aguarde...' : mode === 'signup' ? 'Criar conta' : 'Entrar'}
+              {submitting ? t('auth.submitting') : mode === 'signup' ? t('auth.submitSignup') : t('auth.submitSignin')}
             </button>
           </div>
         </form>

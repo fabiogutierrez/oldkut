@@ -6,6 +6,7 @@ import { isAtLeast18 } from '@/lib/age';
 import { COUNTRIES } from '@/lib/countries';
 import { createClient } from '@/lib/supabase/client';
 import AvatarUpload from '@/components/AvatarUpload';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
@@ -33,6 +34,7 @@ export default function CreateProfileForm({
   defaultBio?: string;
 }) {
   const router = useRouter();
+  const { t } = useLocale();
   const [supabase] = useState(() => createClient());
   const [username, setUsername] = useState(defaultUsername ?? '');
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
@@ -83,31 +85,31 @@ export default function CreateProfileForm({
 
     const cleanUsername = username.trim().toLowerCase();
     if (!USERNAME_RE.test(cleanUsername)) {
-      setError('O nome de usuário deve ter de 3 a 20 letras minúsculas, números ou "_".');
+      setError(t('profile.errorUsername'));
       return;
     }
     if (usernameStatus === 'taken') {
-      setError('Esse nome de usuário já está em uso.');
+      setError(t('profile.errorUsernameTaken'));
       return;
     }
     if (usernameStatus === 'checking') {
-      setError('Aguarde a verificação do nome de usuário.');
+      setError(t('profile.errorUsernameChecking'));
       return;
     }
     if (!displayName.trim()) {
-      setError('Informe seu nome.');
+      setError(t('profile.errorName'));
       return;
     }
     if (!birthday) {
-      setError('Informe sua data de nascimento.');
+      setError(t('auth.errorBirthday'));
       return;
     }
     if (!isAtLeast18(birthday)) {
-      setError('Você precisa ter 18 anos ou mais para usar o oldkut.');
+      setError(t('auth.errorAge'));
       return;
     }
     if (!country) {
-      setError('Selecione o seu país.');
+      setError(t('auth.errorCountry'));
       return;
     }
 
@@ -129,7 +131,7 @@ export default function CreateProfileForm({
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível salvar o perfil.');
+      setError(body?.error ?? t('profile.errorUsername'));
       return;
     }
 
@@ -139,26 +141,31 @@ export default function CreateProfileForm({
 
   return (
     <form className="oldkut-form" onSubmit={handleSubmit}>
-      <label htmlFor="username">Nome de usuário (vai aparecer na URL do seu perfil)</label>
+      <label htmlFor="username">{t('profile.usernameLabel')}</label>
       <input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex: joaosilva" />
-      <p className="oldkut-hint">Só letras minúsculas, números e &quot;_&quot; — de 3 a 20 caracteres.</p>
-      {usernameStatus === 'checking' && <p className="oldkut-hint">Verificando...</p>}
-      {usernameStatus === 'available' && <p className="oldkut-notice">✓ Nome de usuário disponível.</p>}
-      {usernameStatus === 'taken' && <p className="oldkut-error">Esse nome de usuário já está em uso.</p>}
-      {usernameStatus === 'invalid' && username.trim() && <p className="oldkut-error">Formato inválido.</p>}
+      <p className="oldkut-hint">{t('profile.usernameHint')}</p>
+      {usernameStatus === 'checking' && <p className="oldkut-hint">{t('profile.usernameChecking')}</p>}
+      {usernameStatus === 'available' && <p className="oldkut-notice">{t('profile.usernameAvailable')}</p>}
+      {usernameStatus === 'taken' && <p className="oldkut-error">{t('profile.usernameTaken')}</p>}
+      {usernameStatus === 'invalid' && username.trim() && <p className="oldkut-error">{t('profile.usernameInvalid')}</p>}
 
-      <label htmlFor="displayName">Nome</label>
-      <input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Seu nome" />
+      <label htmlFor="displayName">{t('profile.nameLabel')}</label>
+      <input
+        id="displayName"
+        value={displayName}
+        onChange={(e) => setDisplayName(e.target.value)}
+        placeholder={t('profile.namePlaceholder')}
+      />
 
-      <label>Foto do perfil</label>
+      <label>{t('profile.photoLabel')}</label>
       <AvatarUpload userId={userId} value={photoUrl} onChange={setPhotoUrl} />
 
-      <label htmlFor="city">Cidade</label>
-      <input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" />
+      <label htmlFor="city">{t('profile.cityLabel')}</label>
+      <input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder={t('profile.cityPlaceholder')} />
 
-      <label htmlFor="country">País</label>
+      <label htmlFor="country">{t('auth.country')}</label>
       <select id="country" value={country} onChange={(e) => setCountry(e.target.value)}>
-        <option value="">Selecione...</option>
+        <option value="">{t('auth.selectCountry')}</option>
         {COUNTRIES.map((c) => (
           <option key={c} value={c}>
             {c}
@@ -166,18 +173,18 @@ export default function CreateProfileForm({
         ))}
       </select>
 
-      <label htmlFor="birthday">Data de nascimento</label>
+      <label htmlFor="birthday">{t('auth.birthday')}</label>
       <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
-      <p className="oldkut-hint">É preciso ter 18 anos ou mais pra usar o oldkut.</p>
+      <p className="oldkut-hint">{t('auth.ageHint')}</p>
 
-      <label htmlFor="bio">Sobre mim</label>
-      <textarea id="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Fale um pouco sobre você..." />
+      <label htmlFor="bio">{t('profile.bioLabel')}</label>
+      <textarea id="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t('profile.bioPlaceholder')} />
 
       {error && <p className="oldkut-error">{error}</p>}
 
       <div style={{ marginTop: 12 }}>
         <button type="submit" className="oldkut-btn" disabled={submitting || usernameStatus === 'checking' || usernameStatus === 'taken'}>
-          {submitting ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Criar perfil'}
+          {submitting ? t('profile.saving') : mode === 'edit' ? t('profile.submitEdit') : t('profile.submitCreate')}
         </button>
       </div>
     </form>

@@ -2,11 +2,13 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 type FriendStatus = 'none' | 'pending_sent' | 'pending_received' | 'accepted';
 
 export default function FriendButton({ targetUserId, initialStatus }: { targetUserId: string; initialStatus: FriendStatus }) {
   const router = useRouter();
+  const { t } = useLocale();
   const [status, setStatus] = useState<FriendStatus>(initialStatus);
   const [submitting, setSubmitting] = useState(false);
 
@@ -49,7 +51,7 @@ export default function FriendButton({ targetUserId, initialStatus }: { targetUs
   if (status === 'accepted') {
     return (
       <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleRemove}>
-        Amigos — desfazer
+        {t('friend.friendsRemove')}
       </button>
     );
   }
@@ -57,7 +59,7 @@ export default function FriendButton({ targetUserId, initialStatus }: { targetUs
   if (status === 'pending_sent') {
     return (
       <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleRemove}>
-        Pedido enviado — cancelar
+        {t('friend.pendingSent')}
       </button>
     );
   }
@@ -66,10 +68,10 @@ export default function FriendButton({ targetUserId, initialStatus }: { targetUs
     return (
       <div style={{ display: 'flex', gap: 8 }}>
         <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleAccept}>
-          Aceitar
+          {t('friend.accept')}
         </button>
         <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleRemove}>
-          Recusar
+          {t('friend.reject')}
         </button>
       </div>
     );
@@ -77,7 +79,7 @@ export default function FriendButton({ targetUserId, initialStatus }: { targetUs
 
   return (
     <button type="button" className="oldkut-btn" disabled={submitting} onClick={handleAdd}>
-      Adicionar amigo
+      {t('friend.add')}
     </button>
   );
 }

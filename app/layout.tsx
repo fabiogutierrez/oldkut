@@ -3,6 +3,8 @@ import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import OldkutHeader from '@/components/OldkutHeader';
 import type { Notification } from '@/lib/notifications';
+import { LocaleProvider } from '@/lib/i18n/LocaleProvider';
+import { getLocale } from '@/lib/i18n/getLocale';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -30,6 +32,7 @@ interface TestimonialAuthorRow {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -84,13 +87,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="pt-BR">
       <body>
-        <div className="oldkut-shell">
-          <OldkutHeader username={username} notifications={notifications} />
-          <div className="oldkut-container">{children}</div>
-          <div className="oldkut-footer">
-            <Link href="/privacidade">Privacidade</Link>·<Link href="/termos">Termos de Serviço</Link>
+        <LocaleProvider initialLocale={locale}>
+          <div className="oldkut-shell">
+            <OldkutHeader username={username} notifications={notifications} />
+            <div className="oldkut-container">{children}</div>
+            <div className="oldkut-footer">
+              <Link href="/privacidade">Privacidade</Link>·<Link href="/termos">Termos de Serviço</Link>
+            </div>
           </div>
-        </div>
+        </LocaleProvider>
       </body>
     </html>
   );

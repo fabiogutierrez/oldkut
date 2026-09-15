@@ -57,6 +57,16 @@ body {
   font-size: 12px;
 }
 
+.oldkut-lang-switcher {
+  background: #22385c;
+  color: #dbe6f7;
+  border: 1px solid #5474a7;
+  border-radius: 3px;
+  font-size: 11px;
+  padding: 3px 4px;
+  cursor: pointer;
+}
+
 .oldkut-topbar-right a:hover,
 .oldkut-topbar-right button:hover {
   text-decoration: underline;

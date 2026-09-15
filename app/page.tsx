@@ -1,6 +1,6 @@
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import LandingContent from '@/components/LandingContent';
 
 export default async function Home() {
   const supabase = await createClient();
@@ -9,18 +9,7 @@ export default async function Home() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return (
-      <div className="oldkut-landing">
-        <h1>oldkut!</h1>
-        <p>Adicione amigos, deixe recados no perfil de quem você conhece e relembre a época das comunidades.</p>
-        <Link href="/login" className="oldkut-landing-link">
-          Entrar ou criar conta
-        </Link>
-        <p className="oldkut-hint" style={{ marginTop: 16 }}>
-          O oldkut é destinado a maiores de 18 anos.
-        </p>
-      </div>
-    );
+    return <LandingContent />;
   }
 
   const { data: profile } = await supabase.from('oldkut_profiles').select('username').eq('user_id', user.id).maybeSingle();

@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import AvatarUpload from '@/components/AvatarUpload';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 export default function CreateCommunityForm({
   userId,
@@ -20,6 +21,7 @@ export default function CreateCommunityForm({
   defaultPhotoUrl?: string | null;
 }) {
   const router = useRouter();
+  const { t } = useLocale();
   const [name, setName] = useState(defaultName ?? '');
   const [description, setDescription] = useState(defaultDescription ?? '');
   const [photoUrl, setPhotoUrl] = useState<string | null>(defaultPhotoUrl ?? null);
@@ -31,11 +33,11 @@ export default function CreateCommunityForm({
     setError(null);
 
     if (name.trim().length < 3) {
-      setError('O nome da comunidade deve ter pelo menos 3 caracteres.');
+      setError(t('community.errorName'));
       return;
     }
     if (!description.trim()) {
-      setError('Escreva uma descrição para a comunidade.');
+      setError(t('community.errorDescription'));
       return;
     }
 
@@ -54,7 +56,7 @@ export default function CreateCommunityForm({
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível salvar a comunidade.');
+      setError(body?.error ?? t('community.errorName'));
       return;
     }
 
@@ -65,26 +67,26 @@ export default function CreateCommunityForm({
 
   return (
     <form className="oldkut-form" onSubmit={handleSubmit}>
-      <label htmlFor="name">Nome da comunidade</label>
-      <input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder="ex: Eu odeio acordar cedo" />
+      <label htmlFor="name">{t('community.nameLabel')}</label>
+      <input id="name" value={name} onChange={(e) => setName(e.target.value)} placeholder={t('community.namePlaceholder')} />
 
-      <label htmlFor="description">Descrição</label>
+      <label htmlFor="description">{t('community.descriptionLabel')}</label>
       <textarea
         id="description"
         rows={4}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
-        placeholder="Do que se trata essa comunidade?"
+        placeholder={t('community.descriptionPlaceholder')}
       />
 
-      <label>Foto da comunidade</label>
+      <label>{t('community.photoLabel')}</label>
       <AvatarUpload userId={userId} value={photoUrl} onChange={setPhotoUrl} />
 
       {error && <p className="oldkut-error">{error}</p>}
 
       <div style={{ marginTop: 12 }}>
         <button type="submit" className="oldkut-btn" disabled={submitting}>
-          {submitting ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Criar comunidade'}
+          {submitting ? t('profile.saving') : mode === 'edit' ? t('community.submitEdit') : t('community.submitCreate')}
         </button>
       </div>
     </form>
