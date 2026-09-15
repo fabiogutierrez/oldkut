@@ -29,6 +29,13 @@ function LoginForm() {
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  const handleGoogle = () => {
+    supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -90,6 +97,11 @@ function LoginForm() {
     <div className="oldkut-box" style={{ maxWidth: 380, margin: '30px auto' }}>
       <div className="oldkut-box-title">{mode === 'signup' ? 'Criar conta' : 'Entrar'}</div>
       <div className="oldkut-box-body">
+        <button type="button" className="oldkut-btn oldkut-google-btn" onClick={handleGoogle}>
+          Entrar com Google
+        </button>
+        <div className="oldkut-divider">ou</div>
+
         <div className="oldkut-tabs">
           <button type="button" className={mode === 'signin' ? 'active' : ''} onClick={() => setMode('signin')}>
             Entrar

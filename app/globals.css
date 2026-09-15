@@ -377,6 +377,29 @@ body {
   font-weight: bold;
 }
 
+.oldkut-google-btn {
+  width: 100%;
+  text-align: center;
+  padding: 8px 14px;
+}
+
+.oldkut-divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #999;
+  font-size: 11px;
+  margin: 14px 0;
+}
+
+.oldkut-divider::before,
+.oldkut-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #cfdbf0;
+}
+
 .oldkut-btn {
   background: #becee8;
   background: linear-gradient(#eaf0fa, #becee8);
