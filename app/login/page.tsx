@@ -4,6 +4,7 @@ import { Suspense, useState, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { isAtLeast18 } from '@/lib/age';
+import { COUNTRIES } from '@/lib/countries';
 
 export default function LoginPage() {
   return (
@@ -23,6 +24,7 @@ function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [birthday, setBirthday] = useState('');
+  const [country, setCountry] = useState('');
   const [error, setError] = useState<string | null>(authError ? 'Não foi possível confirmar seu login. Tente de novo.' : null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -47,6 +49,10 @@ function LoginForm() {
         setError('Você precisa ter 18 anos ou mais para criar uma conta no oldkut.');
         return;
       }
+      if (!country) {
+        setError('Selecione o seu país.');
+        return;
+      }
     }
 
     setSubmitting(true);
@@ -55,7 +61,7 @@ function LoginForm() {
       const { error: signUpError } = await supabase.auth.signUp({
         email: trimmedEmail,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback`, data: { birthday } },
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback`, data: { birthday, country } },
       });
       setSubmitting(false);
 
@@ -111,6 +117,16 @@ function LoginForm() {
               <label htmlFor="birthday">Data de nascimento</label>
               <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
               <p className="oldkut-hint">É preciso ter 18 anos ou mais pra usar o oldkut.</p>
+
+              <label htmlFor="country">País</label>
+              <select id="country" value={country} onChange={(e) => setCountry(e.target.value)}>
+                <option value="">Selecione...</option>
+                {COUNTRIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </>
           )}
 

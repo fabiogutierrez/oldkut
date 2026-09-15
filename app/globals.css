@@ -358,7 +358,8 @@ body {
 }
 
 .oldkut-form textarea,
-.oldkut-form input {
+.oldkut-form input,
+.oldkut-form select {
   width: 100%;
   font-family: inherit;
   font-size: 13px;

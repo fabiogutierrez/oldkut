@@ -3,15 +3,25 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAtLeast18 } from '@/lib/age';
+import { COUNTRIES } from '@/lib/countries';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
-export default function CreateProfileForm({ defaultName, defaultBirthday }: { defaultName?: string; defaultBirthday?: string }) {
+export default function CreateProfileForm({
+  defaultName,
+  defaultBirthday,
+  defaultCountry,
+}: {
+  defaultName?: string;
+  defaultBirthday?: string;
+  defaultCountry?: string;
+}) {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState(defaultName ?? '');
   const [photoUrl, setPhotoUrl] = useState('');
   const [city, setCity] = useState('');
+  const [country, setCountry] = useState(defaultCountry ?? '');
   const [birthday, setBirthday] = useState(defaultBirthday ?? '');
   const [bio, setBio] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -38,6 +48,10 @@ export default function CreateProfileForm({ defaultName, defaultBirthday }: { de
       setError('Você precisa ter 18 anos ou mais para usar o oldkut.');
       return;
     }
+    if (!country) {
+      setError('Selecione o seu país.');
+      return;
+    }
 
     setSubmitting(true);
     const res = await fetch('/api/profile', {
@@ -48,6 +62,7 @@ export default function CreateProfileForm({ defaultName, defaultBirthday }: { de
         displayName: displayName.trim(),
         photoUrl: photoUrl.trim() || null,
         city: city.trim() || null,
+        country,
         birthday: birthday || null,
         bio: bio.trim() || null,
       }),
@@ -78,6 +93,16 @@ export default function CreateProfileForm({ defaultName, defaultBirthday }: { de
 
       <label htmlFor="city">Cidade</label>
       <input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" />
+
+      <label htmlFor="country">País</label>
+      <select id="country" value={country} onChange={(e) => setCountry(e.target.value)}>
+        <option value="">Selecione...</option>
+        {COUNTRIES.map((c) => (
+          <option key={c} value={c}>
+            {c}
+          </option>
+        ))}
+      </select>
 
       <label htmlFor="birthday">Data de nascimento</label>
       <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />

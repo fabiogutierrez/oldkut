@@ -4,6 +4,7 @@ interface OldkutProfile {
   photo_url: string | null;
   bio: string | null;
   city: string | null;
+  country: string | null;
   birthday: string | null;
 }
 
@@ -14,6 +15,7 @@ function formatBirthday(iso: string) {
 
 export default function ProfileCard({ profile }: { profile: OldkutProfile }) {
   const initial = profile.display_name?.[0]?.toUpperCase() ?? '?';
+  const location = [profile.city, profile.country].filter(Boolean).join(', ');
 
   return (
     <div className="oldkut-box">
@@ -26,10 +28,10 @@ export default function ProfileCard({ profile }: { profile: OldkutProfile }) {
         <div className="oldkut-profile-name">{profile.display_name}</div>
         <div className="oldkut-profile-meta">
           @{profile.username}
-          {profile.city && (
+          {location && (
             <>
               <br />
-              {profile.city}
+              {location}
             </>
           )}
           {profile.birthday && (

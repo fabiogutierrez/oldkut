@@ -24,6 +24,7 @@ export default async function CriarPerfilPage() {
         <CreateProfileForm
           defaultName={typeof user.user_metadata?.name === 'string' ? user.user_metadata.name : ''}
           defaultBirthday={typeof user.user_metadata?.birthday === 'string' ? user.user_metadata.birthday : ''}
+          defaultCountry={typeof user.user_metadata?.country === 'string' ? user.user_metadata.country : ''}
         />
       </div>
     </div>
