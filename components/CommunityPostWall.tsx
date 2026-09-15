@@ -125,7 +125,7 @@ function PostItem({
         <span className="oldkut-scrap-date">{formatDate(post.createdAt)}</span>
         <div className="oldkut-scrap-message">{post.message}</div>
 
-        <div style={{ display: 'flex', gap: 10, alignItems: 'center', marginTop: 4 }}>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'center', marginTop: 4 }}>
           <button
             type="button"
             className="oldkut-scrap-delete"

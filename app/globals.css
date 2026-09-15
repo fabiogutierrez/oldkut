@@ -638,4 +638,48 @@ body {
   .oldkut-sidebar {
     width: 100%;
   }
+
+  .oldkut-sidebar .oldkut-avatar {
+    width: 160px;
+    margin: 0 auto;
+  }
+
+  .oldkut-topbar {
+    padding: 8px 12px;
+    row-gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .oldkut-wordmark {
+    font-size: 22px;
+  }
+
+  .oldkut-topbar-right {
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    row-gap: 8px;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .oldkut-container {
+    padding: 14px 12px 50px;
+  }
+
+  .oldkut-box-title {
+    font-size: 12.5px;
+    padding: 8px 10px;
+  }
+
+  /* Evita que o iOS dê zoom automático ao focar um campo com fonte < 16px. */
+  .oldkut-form textarea,
+  .oldkut-form input,
+  .oldkut-form select,
+  .oldkut-lang-switcher {
+    font-size: 16px;
+  }
+
+  .oldkut-notif-panel {
+    width: calc(100vw - 24px);
+  }
 }
