@@ -28,6 +28,7 @@ export default function OldkutHeader({
         oldkut<span>!</span>
       </Link>
       <div className="oldkut-topbar-right">
+        <Link href="/comunidades">comunidades</Link>
         {username ? (
           <>
             <NotificationBell initialNotifications={notifications} />

@@ -5,6 +5,7 @@ import ScrapWall from '@/components/ScrapWall';
 import TestimonialWall from '@/components/TestimonialWall';
 import FriendButton from '@/components/FriendButton';
 import FriendsList from '@/components/FriendsList';
+import ProfileCommunities from '@/components/ProfileCommunities';
 
 interface ScrapAuthor {
   username: string | null;
@@ -102,6 +103,16 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     .filter((f): f is FriendProfile => f !== null)
     .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
 
+  const { data: communitiesRaw } = await supabase
+    .from('oldkut_community_members')
+    .select('community:oldkut_communities(id, name, photo_url)')
+    .eq('user_id', profile.user_id);
+
+  const communities = ((communitiesRaw as unknown as { community: { id: string; name: string; photo_url: string | null } | null }[] | null) ?? [])
+    .map((c) => c.community)
+    .filter((c): c is { id: string; name: string; photo_url: string | null } => c !== null)
+    .map((c) => ({ id: c.id, name: c.name, photoUrl: c.photo_url }));
+
   let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
   if (user && !isOwnProfile) {
     const { data: rel } = await supabase
@@ -129,6 +140,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
           </div>
         )}
         <FriendsList friends={friends} />
+        <ProfileCommunities communities={communities} />
       </div>
       <div className="oldkut-main">
         <TestimonialWall
