@@ -21,7 +21,10 @@ export default async function CriarPerfilPage() {
     <div className="oldkut-box">
       <div className="oldkut-box-title">Criar seu perfil</div>
       <div className="oldkut-box-body">
-        <CreateProfileForm defaultName={typeof user.user_metadata?.name === 'string' ? user.user_metadata.name : ''} />
+        <CreateProfileForm
+          defaultName={typeof user.user_metadata?.name === 'string' ? user.user_metadata.name : ''}
+          defaultBirthday={typeof user.user_metadata?.birthday === 'string' ? user.user_metadata.birthday : ''}
+        />
       </div>
     </div>
   );

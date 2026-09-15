@@ -3,6 +3,7 @@
 import { Suspense, useState, type FormEvent } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { isAtLeast18 } from '@/lib/age';
 
 export default function LoginPage() {
   return (
@@ -21,6 +22,7 @@ function LoginForm() {
   const [mode, setMode] = useState<'signup' | 'signin'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [birthday, setBirthday] = useState('');
   const [error, setError] = useState<string | null>(authError ? 'Não foi possível confirmar seu login. Tente de novo.' : null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -36,13 +38,24 @@ function LoginForm() {
       return;
     }
 
+    if (mode === 'signup') {
+      if (!birthday) {
+        setError('Informe sua data de nascimento.');
+        return;
+      }
+      if (!isAtLeast18(birthday)) {
+        setError('Você precisa ter 18 anos ou mais para criar uma conta no oldkut.');
+        return;
+      }
+    }
+
     setSubmitting(true);
 
     if (mode === 'signup') {
       const { error: signUpError } = await supabase.auth.signUp({
         email: trimmedEmail,
         password,
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback`, data: { birthday } },
       });
       setSubmitting(false);
 
@@ -92,6 +105,14 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder={mode === 'signup' ? 'Crie uma senha' : 'Sua senha'}
           />
+
+          {mode === 'signup' && (
+            <>
+              <label htmlFor="birthday">Data de nascimento</label>
+              <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+              <p className="oldkut-hint">É preciso ter 18 anos ou mais pra usar o oldkut.</p>
+            </>
+          )}
 
           {error && <p className="oldkut-error">{error}</p>}
           {notice && <p className="oldkut-notice">{notice}</p>}

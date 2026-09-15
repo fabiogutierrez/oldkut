@@ -16,6 +16,9 @@ export default async function Home() {
         <Link href="/login" className="oldkut-landing-link">
           Entrar ou criar conta
         </Link>
+        <p className="oldkut-hint" style={{ marginTop: 16 }}>
+          O oldkut é destinado a maiores de 18 anos.
+        </p>
       </div>
     );
   }

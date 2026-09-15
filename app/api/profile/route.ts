@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { isAtLeast18 } from '@/lib/age';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
@@ -16,12 +17,16 @@ export async function POST(request: Request) {
   const body = await request.json().catch(() => null);
   const username = String(body?.username ?? '').trim().toLowerCase();
   const displayName = String(body?.displayName ?? '').trim();
+  const birthday = String(body?.birthday ?? '');
 
   if (!USERNAME_RE.test(username)) {
     return NextResponse.json({ error: 'Nome de usuário inválido.' }, { status: 400 });
   }
   if (!displayName) {
     return NextResponse.json({ error: 'Informe seu nome.' }, { status: 400 });
+  }
+  if (!birthday || !isAtLeast18(birthday)) {
+    return NextResponse.json({ error: 'Você precisa ter 18 anos ou mais para usar o oldkut.' }, { status: 400 });
   }
 
   const { error } = await supabase.from('oldkut_profiles').upsert({
@@ -30,7 +35,7 @@ export async function POST(request: Request) {
     display_name: displayName,
     photo_url: body?.photoUrl ?? null,
     city: body?.city ?? null,
-    birthday: body?.birthday ?? null,
+    birthday,
     bio: body?.bio ?? null,
   });
 

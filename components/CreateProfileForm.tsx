@@ -2,16 +2,17 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import { isAtLeast18 } from '@/lib/age';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
-export default function CreateProfileForm({ defaultName }: { defaultName?: string }) {
+export default function CreateProfileForm({ defaultName, defaultBirthday }: { defaultName?: string; defaultBirthday?: string }) {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [displayName, setDisplayName] = useState(defaultName ?? '');
   const [photoUrl, setPhotoUrl] = useState('');
   const [city, setCity] = useState('');
-  const [birthday, setBirthday] = useState('');
+  const [birthday, setBirthday] = useState(defaultBirthday ?? '');
   const [bio, setBio] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -27,6 +28,14 @@ export default function CreateProfileForm({ defaultName }: { defaultName?: strin
     }
     if (!displayName.trim()) {
       setError('Informe seu nome.');
+      return;
+    }
+    if (!birthday) {
+      setError('Informe sua data de nascimento.');
+      return;
+    }
+    if (!isAtLeast18(birthday)) {
+      setError('Você precisa ter 18 anos ou mais para usar o oldkut.');
       return;
     }
 
@@ -70,8 +79,9 @@ export default function CreateProfileForm({ defaultName }: { defaultName?: strin
       <label htmlFor="city">Cidade</label>
       <input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" />
 
-      <label htmlFor="birthday">Aniversário</label>
+      <label htmlFor="birthday">Data de nascimento</label>
       <input id="birthday" type="date" value={birthday} onChange={(e) => setBirthday(e.target.value)} />
+      <p className="oldkut-hint">É preciso ter 18 anos ou mais pra usar o oldkut.</p>
 
       <label htmlFor="bio">Sobre mim</label>
       <textarea id="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Fale um pouco sobre você..." />
