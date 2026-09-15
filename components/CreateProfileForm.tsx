@@ -13,25 +13,35 @@ type UsernameStatus = 'idle' | 'invalid' | 'checking' | 'available' | 'taken';
 
 export default function CreateProfileForm({
   userId,
+  mode = 'create',
+  defaultUsername,
   defaultName,
+  defaultPhotoUrl,
+  defaultCity,
   defaultBirthday,
   defaultCountry,
+  defaultBio,
 }: {
   userId: string;
+  mode?: 'create' | 'edit';
+  defaultUsername?: string;
   defaultName?: string;
+  defaultPhotoUrl?: string | null;
+  defaultCity?: string;
   defaultBirthday?: string;
   defaultCountry?: string;
+  defaultBio?: string;
 }) {
   const router = useRouter();
   const [supabase] = useState(() => createClient());
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState(defaultUsername ?? '');
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
   const [displayName, setDisplayName] = useState(defaultName ?? '');
-  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
-  const [city, setCity] = useState('');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(defaultPhotoUrl ?? null);
+  const [city, setCity] = useState(defaultCity ?? '');
   const [country, setCountry] = useState(defaultCountry ?? '');
   const [birthday, setBirthday] = useState(defaultBirthday ?? '');
-  const [bio, setBio] = useState('');
+  const [bio, setBio] = useState(defaultBio ?? '');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -44,6 +54,10 @@ export default function CreateProfileForm({
     }
     if (!USERNAME_RE.test(cleanUsername)) {
       setUsernameStatus('invalid');
+      return;
+    }
+    if (mode === 'edit' && cleanUsername === (defaultUsername ?? '').toLowerCase()) {
+      setUsernameStatus('idle');
       return;
     }
 
@@ -61,7 +75,7 @@ export default function CreateProfileForm({
       cancelled = true;
       clearTimeout(timer);
     };
-  }, [username, supabase]);
+  }, [username, supabase, mode, defaultUsername]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -115,7 +129,7 @@ export default function CreateProfileForm({
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível criar o perfil.');
+      setError(body?.error ?? 'Não foi possível salvar o perfil.');
       return;
     }
 
@@ -163,7 +177,7 @@ export default function CreateProfileForm({
 
       <div style={{ marginTop: 12 }}>
         <button type="submit" className="oldkut-btn" disabled={submitting || usernameStatus === 'checking' || usernameStatus === 'taken'}>
-          {submitting ? 'Criando...' : 'Criar perfil'}
+          {submitting ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Criar perfil'}
         </button>
       </div>
     </form>

@@ -1,4 +1,5 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import JoinCommunityButton from '@/components/JoinCommunityButton';
 
@@ -45,7 +46,14 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">{community.name}</div>
+      <div className="oldkut-box-title">
+        {community.name}
+        {user?.id === community.creator_user_id && (
+          <Link href={`/comunidades/${community.id}/editar`} className="oldkut-box-title-action">
+            Editar
+          </Link>
+        )}
+      </div>
       <div className="oldkut-box-body">
         <div style={{ display: 'flex', gap: 14, marginBottom: 14 }}>
           {community.photo_url ? (

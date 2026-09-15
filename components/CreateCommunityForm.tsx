@@ -2,12 +2,27 @@
 
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
+import AvatarUpload from '@/components/AvatarUpload';
 
-export default function CreateCommunityForm() {
+export default function CreateCommunityForm({
+  userId,
+  mode = 'create',
+  communityId,
+  defaultName,
+  defaultDescription,
+  defaultPhotoUrl,
+}: {
+  userId: string;
+  mode?: 'create' | 'edit';
+  communityId?: string;
+  defaultName?: string;
+  defaultDescription?: string;
+  defaultPhotoUrl?: string | null;
+}) {
   const router = useRouter();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [name, setName] = useState(defaultName ?? '');
+  const [description, setDescription] = useState(defaultDescription ?? '');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(defaultPhotoUrl ?? null);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -26,19 +41,20 @@ export default function CreateCommunityForm() {
 
     setSubmitting(true);
     const res = await fetch('/api/communities', {
-      method: 'POST',
+      method: mode === 'edit' ? 'PATCH' : 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
+        id: communityId,
         name: name.trim(),
         description: description.trim(),
-        photoUrl: photoUrl.trim() || null,
+        photoUrl,
       }),
     });
     setSubmitting(false);
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível criar a comunidade.');
+      setError(body?.error ?? 'Não foi possível salvar a comunidade.');
       return;
     }
 
@@ -61,14 +77,14 @@ export default function CreateCommunityForm() {
         placeholder="Do que se trata essa comunidade?"
       />
 
-      <label htmlFor="photoUrl">URL da foto (opcional)</label>
-      <input id="photoUrl" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="https://..." />
+      <label>Foto da comunidade</label>
+      <AvatarUpload userId={userId} value={photoUrl} onChange={setPhotoUrl} />
 
       {error && <p className="oldkut-error">{error}</p>}
 
       <div style={{ marginTop: 12 }}>
         <button type="submit" className="oldkut-btn" disabled={submitting}>
-          {submitting ? 'Criando...' : 'Criar comunidade'}
+          {submitting ? 'Salvando...' : mode === 'edit' ? 'Salvar alterações' : 'Criar comunidade'}
         </button>
       </div>
     </form>

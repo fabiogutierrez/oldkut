@@ -25,7 +25,7 @@ export default async function NovaComunidadePage() {
     <div className="oldkut-box">
       <div className="oldkut-box-title">Criar comunidade</div>
       <div className="oldkut-box-body">
-        <CreateCommunityForm />
+        <CreateCommunityForm userId={user.id} />
       </div>
     </div>
   );
