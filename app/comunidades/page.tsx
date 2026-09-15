@@ -23,7 +23,7 @@ export default async function ComunidadesPage() {
 
   const { data: communitiesRaw } = await supabase
     .from('oldkut_communities')
-    .select('id, name, description, photo_url, is_private, oldkut_community_members(count)')
+    .select('id, name, description, photo_url, is_private, oldkut_community_members!left(count)')
     .order('created_at', { ascending: false });
 
   const communities = ((communitiesRaw as unknown as CommunityRow[]) ?? []).map((c) => ({

@@ -55,7 +55,8 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
     .map((m) => m.user)
     .filter((m): m is MemberProfile => m !== null);
 
-  const isMember = !!user && members.some((m) => m.user_id === user.id);
+  const isMember =
+    !!user && (community.creator_user_id === user.id || members.some((m) => m.user_id === user.id));
   let canAct = false;
   if (user) {
     const { data: viewerProfile } = await supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
@@ -138,7 +139,7 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
                 </p>
               )}
               <div style={{ marginTop: 10 }}>
-                {canAct && <JoinCommunityButton communityId={community.id} initialIsMember={isMember} />}
+                {canAct && !isCreator && <JoinCommunityButton communityId={community.id} initialIsMember={isMember} />}
               </div>
             </div>
           </div>
