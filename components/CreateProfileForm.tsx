@@ -1,11 +1,14 @@
 'use client';
 
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAtLeast18 } from '@/lib/age';
 import { COUNTRIES } from '@/lib/countries';
+import { createClient } from '@/lib/supabase/client';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
+
+type UsernameStatus = 'idle' | 'invalid' | 'checking' | 'available' | 'taken';
 
 export default function CreateProfileForm({
   defaultName,
@@ -17,7 +20,9 @@ export default function CreateProfileForm({
   defaultCountry?: string;
 }) {
   const router = useRouter();
+  const [supabase] = useState(() => createClient());
   const [username, setUsername] = useState('');
+  const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
   const [displayName, setDisplayName] = useState(defaultName ?? '');
   const [photoUrl, setPhotoUrl] = useState('');
   const [city, setCity] = useState('');
@@ -27,6 +32,34 @@ export default function CreateProfileForm({
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    const cleanUsername = username.trim().toLowerCase();
+
+    if (!cleanUsername) {
+      setUsernameStatus('idle');
+      return;
+    }
+    if (!USERNAME_RE.test(cleanUsername)) {
+      setUsernameStatus('invalid');
+      return;
+    }
+
+    setUsernameStatus('checking');
+    let cancelled = false;
+
+    const timer = setTimeout(async () => {
+      const { data } = await supabase.from('oldkut_profiles').select('user_id').eq('username', cleanUsername).maybeSingle();
+      if (!cancelled) {
+        setUsernameStatus(data ? 'taken' : 'available');
+      }
+    }, 400);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(timer);
+    };
+  }, [username, supabase]);
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -34,6 +67,14 @@ export default function CreateProfileForm({
     const cleanUsername = username.trim().toLowerCase();
     if (!USERNAME_RE.test(cleanUsername)) {
       setError('O nome de usuário deve ter de 3 a 20 letras minúsculas, números ou "_".');
+      return;
+    }
+    if (usernameStatus === 'taken') {
+      setError('Esse nome de usuário já está em uso.');
+      return;
+    }
+    if (usernameStatus === 'checking') {
+      setError('Aguarde a verificação do nome de usuário.');
       return;
     }
     if (!displayName.trim()) {
@@ -84,6 +125,10 @@ export default function CreateProfileForm({
       <label htmlFor="username">Nome de usuário (vai aparecer na URL do seu perfil)</label>
       <input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="ex: joaosilva" />
       <p className="oldkut-hint">Só letras minúsculas, números e &quot;_&quot; — de 3 a 20 caracteres.</p>
+      {usernameStatus === 'checking' && <p className="oldkut-hint">Verificando...</p>}
+      {usernameStatus === 'available' && <p className="oldkut-notice">✓ Nome de usuário disponível.</p>}
+      {usernameStatus === 'taken' && <p className="oldkut-error">Esse nome de usuário já está em uso.</p>}
+      {usernameStatus === 'invalid' && username.trim() && <p className="oldkut-error">Formato inválido.</p>}
 
       <label htmlFor="displayName">Nome</label>
       <input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Seu nome" />
@@ -114,7 +159,7 @@ export default function CreateProfileForm({
       {error && <p className="oldkut-error">{error}</p>}
 
       <div style={{ marginTop: 12 }}>
-        <button type="submit" className="oldkut-btn" disabled={submitting}>
+        <button type="submit" className="oldkut-btn" disabled={submitting || usernameStatus === 'checking' || usernameStatus === 'taken'}>
           {submitting ? 'Criando...' : 'Criar perfil'}
         </button>
       </div>
