@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
 import OldkutHeader from '@/components/OldkutHeader';
 import type { Notification } from '@/lib/notifications';
@@ -86,6 +87,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <div className="oldkut-shell">
           <OldkutHeader username={username} notifications={notifications} />
           <div className="oldkut-container">{children}</div>
+          <div className="oldkut-footer">
+            <Link href="/privacidade">Privacidade</Link>·<Link href="/termos">Termos de Serviço</Link>
+          </div>
         </div>
       </body>
     </html>
