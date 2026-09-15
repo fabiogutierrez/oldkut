@@ -21,10 +21,14 @@ export default async function ComunidadesPage() {
   const supabase = await createClient();
   const locale = await getLocale();
 
-  const { data: communitiesRaw } = await supabase
+  const { data: communitiesRaw, error: communitiesError } = await supabase
     .from('oldkut_communities')
-    .select('id, name, description, photo_url, is_private, oldkut_community_members!left(count)')
+    .select('id, name, description, photo_url, is_private, oldkut_community_members(count)')
     .order('created_at', { ascending: false });
+
+  if (communitiesError) {
+    console.error('Falha ao carregar comunidades:', communitiesError);
+  }
 
   const communities = ((communitiesRaw as unknown as CommunityRow[]) ?? []).map((c) => ({
     id: c.id,
