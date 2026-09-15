@@ -1,0 +1,331 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.oldkut-shell {
+  min-height: 100vh;
+  background: #e8edf8;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #333;
+}
+
+.oldkut-topbar {
+  background: #38598b;
+  background: linear-gradient(#5474a7, #38598b);
+  border-bottom: 3px solid #22385c;
+  padding: 10px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.oldkut-wordmark {
+  color: #fff;
+  font-size: 26px;
+  font-weight: bold;
+  font-style: italic;
+  text-decoration: none;
+  letter-spacing: -0.5px;
+}
+
+.oldkut-wordmark span {
+  color: #ffd400;
+}
+
+.oldkut-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 12px;
+}
+
+.oldkut-topbar-right a,
+.oldkut-topbar-right button {
+  color: #dbe6f7;
+  text-decoration: none;
+  background: none;
+  border: none;
+  font: inherit;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.oldkut-topbar-right a:hover,
+.oldkut-topbar-right button:hover {
+  text-decoration: underline;
+  color: #fff;
+}
+
+.oldkut-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 20px 16px 60px;
+}
+
+.oldkut-box {
+  background: #fff;
+  border: 1px solid #a4bade;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.oldkut-box-title {
+  background: #becee8;
+  background: linear-gradient(#dbe6f7, #becee8);
+  border-bottom: 1px solid #a4bade;
+  padding: 6px 10px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #22385c;
+}
+
+.oldkut-box-body {
+  padding: 12px;
+}
+
+.oldkut-layout {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+}
+
+.oldkut-sidebar {
+  width: 220px;
+  flex-shrink: 0;
+}
+
+.oldkut-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.oldkut-avatar {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 4px;
+  border: 1px solid #a4bade;
+  object-fit: cover;
+  background: #becee8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22385c;
+  font-size: 42px;
+  font-weight: bold;
+}
+
+.oldkut-profile-name {
+  font-size: 18px;
+  font-weight: bold;
+  color: #315286;
+  margin: 10px 0 2px;
+}
+
+.oldkut-profile-meta {
+  font-size: 12px;
+  color: #666;
+  line-height: 1.6;
+}
+
+.oldkut-scrap {
+  display: flex;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #cfdbf0;
+}
+
+.oldkut-scrap:last-child {
+  border-bottom: none;
+}
+
+.oldkut-scrap-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 4px;
+  border: 1px solid #a4bade;
+  object-fit: cover;
+  background: #becee8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #22385c;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.oldkut-scrap-author {
+  color: #315286;
+  font-weight: bold;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+.oldkut-scrap-author:hover {
+  text-decoration: underline;
+}
+
+.oldkut-scrap-date {
+  color: #999;
+  font-size: 11px;
+  margin-left: 6px;
+}
+
+.oldkut-scrap-message {
+  font-size: 13px;
+  margin-top: 2px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.oldkut-scrap-delete {
+  background: none;
+  border: none;
+  color: #b34747;
+  font-size: 11px;
+  cursor: pointer;
+  padding: 0;
+  margin-top: 4px;
+}
+
+.oldkut-scrap-delete:hover {
+  text-decoration: underline;
+}
+
+.oldkut-form textarea,
+.oldkut-form input {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  border: 1px solid #a4bade;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
+
+.oldkut-form label {
+  display: block;
+  font-size: 12px;
+  color: #333;
+  margin: 8px 0 3px;
+  font-weight: bold;
+}
+
+.oldkut-btn {
+  background: #becee8;
+  background: linear-gradient(#eaf0fa, #becee8);
+  border: 1px solid #7d9ac2;
+  border-radius: 3px;
+  color: #22385c;
+  font-weight: bold;
+  font-size: 12px;
+  padding: 6px 14px;
+  cursor: pointer;
+}
+
+.oldkut-btn:hover {
+  background: #dbe6f7;
+}
+
+.oldkut-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.oldkut-landing {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.oldkut-landing h1 {
+  font-size: 32px;
+  color: #315286;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+.oldkut-landing p {
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.oldkut-landing-link {
+  display: inline-block;
+  background: #becee8;
+  background: linear-gradient(#eaf0fa, #becee8);
+  border: 1px solid #7d9ac2;
+  border-radius: 3px;
+  color: #22385c;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 8px 20px;
+  text-decoration: none;
+}
+
+.oldkut-landing-link:hover {
+  background: #dbe6f7;
+}
+
+.oldkut-error {
+  color: #b34747;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.oldkut-notice {
+  color: #2a6b3b;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+.oldkut-hint {
+  color: #777;
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.oldkut-tabs {
+  display: flex;
+  gap: 0;
+  margin-bottom: 14px;
+}
+
+.oldkut-tabs button {
+  flex: 1;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: bold;
+  background: #eaf0fa;
+  border: 1px solid #a4bade;
+  color: #22385c;
+  cursor: pointer;
+}
+
+.oldkut-tabs button.active {
+  background: #becee8;
+}
+
+.oldkut-tabs button:first-child {
+  border-radius: 3px 0 0 3px;
+}
+
+.oldkut-tabs button:last-child {
+  border-radius: 0 3px 3px 0;
+  border-left: none;
+}
+
+@media (max-width: 640px) {
+  .oldkut-layout {
+    flex-direction: column;
+  }
+  .oldkut-sidebar {
+    width: 100%;
+  }
+}
