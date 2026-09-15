@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import ProfileCard from '@/components/ProfileCard';
 import ScrapWall from '@/components/ScrapWall';
+import FriendButton from '@/components/FriendButton';
+import FriendsList from '@/components/FriendsList';
+import FriendRequests from '@/components/FriendRequests';
 
 interface ScrapAuthor {
   username: string | null;
@@ -15,6 +18,13 @@ interface ScrapRow {
   created_at: string;
   author_user_id: string;
   author: ScrapAuthor | null;
+}
+
+interface FriendProfile {
+  user_id: string;
+  username: string;
+  display_name: string;
+  photo_url: string | null;
 }
 
 export default async function PerfilPage({ params }: { params: Promise<{ username: string }> }) {
@@ -53,10 +63,68 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     canPost = !!viewerProfile;
   }
 
+  const [{ data: asRequester }, { data: asAddressee }] = await Promise.all([
+    supabase
+      .from('oldkut_friendships')
+      .select('addressee:oldkut_profiles!oldkut_friendships_addressee_user_id_fkey(user_id, username, display_name, photo_url)')
+      .eq('requester_user_id', profile.user_id)
+      .eq('status', 'accepted'),
+    supabase
+      .from('oldkut_friendships')
+      .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
+      .eq('addressee_user_id', profile.user_id)
+      .eq('status', 'accepted'),
+  ]);
+
+  const friends = [
+    ...((asRequester as unknown as { addressee: FriendProfile | null }[] | null) ?? []).map((r) => r.addressee),
+    ...((asAddressee as unknown as { requester: FriendProfile | null }[] | null) ?? []).map((r) => r.requester),
+  ]
+    .filter((f): f is FriendProfile => f !== null)
+    .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
+
+  let pendingRequests: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
+  if (isOwnProfile) {
+    const { data: pendingRaw } = await supabase
+      .from('oldkut_friendships')
+      .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
+      .eq('addressee_user_id', profile.user_id)
+      .eq('status', 'pending');
+
+    pendingRequests = ((pendingRaw as unknown as { requester: FriendProfile | null }[] | null) ?? [])
+      .map((r) => r.requester)
+      .filter((f): f is FriendProfile => f !== null)
+      .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
+  }
+
+  let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
+  if (user && !isOwnProfile) {
+    const { data: rel } = await supabase
+      .from('oldkut_friendships')
+      .select('requester_user_id, status')
+      .or(
+        `and(requester_user_id.eq.${user.id},addressee_user_id.eq.${profile.user_id}),and(requester_user_id.eq.${profile.user_id},addressee_user_id.eq.${user.id})`
+      )
+      .maybeSingle();
+
+    if (rel) {
+      friendStatus = rel.status === 'accepted' ? 'accepted' : rel.requester_user_id === user.id ? 'pending_sent' : 'pending_received';
+    }
+  }
+
   return (
     <div className="oldkut-layout">
       <div className="oldkut-sidebar">
         <ProfileCard profile={profile} />
+        {!isOwnProfile && canPost && (
+          <div className="oldkut-box">
+            <div className="oldkut-box-body">
+              <FriendButton targetUserId={profile.user_id} initialStatus={friendStatus} />
+            </div>
+          </div>
+        )}
+        {isOwnProfile && <FriendRequests requests={pendingRequests} />}
+        <FriendsList friends={friends} />
       </div>
       <div className="oldkut-main">
         <ScrapWall
