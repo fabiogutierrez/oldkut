@@ -159,10 +159,27 @@ body {
 
 .oldkut-request-row {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  gap: 8px 10px;
   padding: 8px 0;
   border-bottom: 1px dashed #cfdbf0;
+}
+
+.oldkut-request-actions {
+  display: flex;
+  gap: 8px;
+  flex-basis: 100%;
+  padding-left: 50px;
+}
+
+.oldkut-request-actions,
+.oldkut-request-actions > div {
+  width: 100%;
+}
+
+.oldkut-request-actions .oldkut-btn {
+  flex: 1;
 }
 
 .oldkut-request-row:last-child {

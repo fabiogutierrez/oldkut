@@ -24,7 +24,9 @@ export default function FriendRequests({ requests }: { requests: PendingRequest[
             <a href={`/perfil/${r.username}`} className="oldkut-request-name">
               {r.displayName}
             </a>
-            <FriendButton targetUserId={r.userId} initialStatus="pending_received" />
+            <div className="oldkut-request-actions">
+              <FriendButton targetUserId={r.userId} initialStatus="pending_received" />
+            </div>
           </div>
         ))}
       </div>
