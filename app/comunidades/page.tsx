@@ -49,11 +49,6 @@ export default async function ComunidadesPage() {
         </Link>
       </div>
       <div className="oldkut-box-body">
-        {communitiesError && (
-          <p style={{ color: '#a00', fontSize: 12, marginBottom: 10 }}>
-            Erro ao carregar comunidades: {communitiesError.message}
-          </p>
-        )}
         <CommunitiesList communities={communities} />
       </div>
     </div>
