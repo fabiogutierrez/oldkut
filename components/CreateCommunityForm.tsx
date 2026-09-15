@@ -12,6 +12,7 @@ export default function CreateCommunityForm({
   defaultName,
   defaultDescription,
   defaultPhotoUrl,
+  defaultIsPrivate,
 }: {
   userId: string;
   mode?: 'create' | 'edit';
@@ -19,12 +20,14 @@ export default function CreateCommunityForm({
   defaultName?: string;
   defaultDescription?: string;
   defaultPhotoUrl?: string | null;
+  defaultIsPrivate?: boolean;
 }) {
   const router = useRouter();
   const { t } = useLocale();
   const [name, setName] = useState(defaultName ?? '');
   const [description, setDescription] = useState(defaultDescription ?? '');
   const [photoUrl, setPhotoUrl] = useState<string | null>(defaultPhotoUrl ?? null);
+  const [isPrivate, setIsPrivate] = useState(defaultIsPrivate ?? false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -50,6 +53,7 @@ export default function CreateCommunityForm({
         name: name.trim(),
         description: description.trim(),
         photoUrl,
+        isPrivate,
       }),
     });
     setSubmitting(false);
@@ -81,6 +85,15 @@ export default function CreateCommunityForm({
 
       <label>{t('community.photoLabel')}</label>
       <AvatarUpload userId={userId} value={photoUrl} onChange={setPhotoUrl} />
+
+      <label style={{ marginTop: 16 }}>{t('community.privacyTitle')}</label>
+      <div className="oldkut-checkbox-row">
+        <input id="isPrivate" type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />
+        <label htmlFor="isPrivate" style={{ margin: 0, fontWeight: 'normal', cursor: 'pointer' }}>
+          {t('community.privacyLabel')}
+        </label>
+      </div>
+      <p className="oldkut-hint">{t('community.privacyHint')}</p>
 
       {error && <p className="oldkut-error">{error}</p>}
 

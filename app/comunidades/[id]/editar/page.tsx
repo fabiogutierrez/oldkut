@@ -15,7 +15,7 @@ export default async function EditarComunidadePage({ params }: { params: Promise
 
   const { data: community } = await supabase
     .from('oldkut_communities')
-    .select('id, name, description, photo_url, creator_user_id')
+    .select('id, name, description, photo_url, creator_user_id, is_private')
     .eq('id', id)
     .maybeSingle();
 
@@ -35,6 +35,7 @@ export default async function EditarComunidadePage({ params }: { params: Promise
           defaultName={community.name}
           defaultDescription={community.description ?? ''}
           defaultPhotoUrl={community.photo_url}
+          defaultIsPrivate={community.is_private}
         />
       </div>
     </div>

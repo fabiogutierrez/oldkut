@@ -7,6 +7,7 @@ interface Community {
   name: string;
   description: string | null;
   photoUrl: string | null;
+  isPrivate: boolean;
   memberCount: number;
 }
 
@@ -47,7 +48,10 @@ export default function CommunitiesList({ communities }: { communities: Communit
             <div className="oldkut-community-avatar">{c.name?.[0]?.toUpperCase() ?? '?'}</div>
           )}
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="oldkut-community-name">{c.name}</div>
+            <div className="oldkut-community-name">
+              {c.name}
+              {c.isPrivate && ' 🔒'}
+            </div>
             <div className="oldkut-community-desc">{c.description}</div>
             <div className="oldkut-community-count">
               {c.memberCount} {c.memberCount === 1 ? 'membro' : 'membros'}

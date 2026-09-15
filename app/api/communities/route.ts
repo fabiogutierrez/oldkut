@@ -15,6 +15,7 @@ export async function POST(request: Request) {
   const name = String(body?.name ?? '').trim();
   const description = String(body?.description ?? '').trim();
   const photoUrl = body?.photoUrl ? String(body.photoUrl).trim() : null;
+  const isPrivate = Boolean(body?.isPrivate);
 
   if (!name || name.length < 3 || name.length > 80) {
     return NextResponse.json({ error: 'O nome da comunidade deve ter de 3 a 80 caracteres.' }, { status: 400 });
@@ -25,7 +26,7 @@ export async function POST(request: Request) {
 
   const { data, error } = await supabase
     .from('oldkut_communities')
-    .insert({ name, description, photo_url: photoUrl, creator_user_id: user.id })
+    .insert({ name, description, photo_url: photoUrl, creator_user_id: user.id, is_private: isPrivate })
     .select('id')
     .single();
 
@@ -59,6 +60,7 @@ export async function PATCH(request: Request) {
   const name = String(body?.name ?? '').trim();
   const description = String(body?.description ?? '').trim();
   const photoUrl = body?.photoUrl ? String(body.photoUrl).trim() : null;
+  const isPrivate = Boolean(body?.isPrivate);
 
   if (!id) {
     return NextResponse.json({ error: 'Comunidade inválida.' }, { status: 400 });
@@ -72,7 +74,7 @@ export async function PATCH(request: Request) {
 
   const { data, error } = await supabase
     .from('oldkut_communities')
-    .update({ name, description, photo_url: photoUrl })
+    .update({ name, description, photo_url: photoUrl, is_private: isPrivate })
     .eq('id', id)
     .eq('creator_user_id', user.id)
     .select('id')
