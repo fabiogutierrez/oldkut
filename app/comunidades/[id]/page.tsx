@@ -19,12 +19,22 @@ interface PostAuthor {
   photo_url: string | null;
 }
 
+interface ReplyRow {
+  id: string;
+  message: string;
+  created_at: string;
+  author_user_id: string;
+  author: PostAuthor | null;
+}
+
 interface PostRow {
   id: string;
   message: string;
   created_at: string;
   author_user_id: string;
   author: PostAuthor | null;
+  likes: { user_id: string }[] | null;
+  replies: ReplyRow[] | null;
 }
 
 export default async function ComunidadePage({ params }: { params: Promise<{ id: string }> }) {
@@ -73,13 +83,24 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
     authorUsername: string;
     authorDisplayName: string;
     authorPhotoUrl: string | null;
+    likeCount: number;
+    likedByMe: boolean;
+    replies: {
+      id: string;
+      message: string;
+      createdAt: string;
+      authorUserId: string;
+      authorUsername: string;
+      authorDisplayName: string;
+      authorPhotoUrl: string | null;
+    }[];
   }[] = [];
 
   if (canSeeContent) {
     const { data: postsRaw } = await supabase
       .from('oldkut_community_posts')
       .select(
-        'id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_posts_author_user_id_fkey(username, display_name, photo_url)'
+        'id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_posts_author_user_id_fkey(username, display_name, photo_url), likes:oldkut_community_post_likes(user_id), replies:oldkut_community_post_replies(id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_post_replies_author_user_id_fkey(username, display_name, photo_url))'
       )
       .eq('community_id', id)
       .order('created_at', { ascending: false });
@@ -92,6 +113,20 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
       authorUsername: p.author?.username ?? '',
       authorDisplayName: p.author?.display_name ?? '?',
       authorPhotoUrl: p.author?.photo_url ?? null,
+      likeCount: p.likes?.length ?? 0,
+      likedByMe: !!user && (p.likes ?? []).some((l) => l.user_id === user.id),
+      replies: (p.replies ?? [])
+        .slice()
+        .sort((a, b) => a.created_at.localeCompare(b.created_at))
+        .map((r) => ({
+          id: r.id,
+          message: r.message,
+          createdAt: r.created_at,
+          authorUserId: r.author_user_id,
+          authorUsername: r.author?.username ?? '',
+          authorDisplayName: r.author?.display_name ?? '?',
+          authorPhotoUrl: r.author?.photo_url ?? null,
+        })),
     }));
   }
 
@@ -130,6 +165,10 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
                 </p>
               )}
               <p style={{ fontSize: 13, whiteSpace: 'pre-wrap' }}>{community.description}</p>
+              <p className="oldkut-hint">
+                👥 {members.length}{' '}
+                {members.length === 1 ? translate(locale, 'community.memberSingular') : translate(locale, 'community.memberPlural')}
+              </p>
               {creator && (
                 <p className="oldkut-hint">
                   {translate(locale, 'community.createdBy')}{' '}
