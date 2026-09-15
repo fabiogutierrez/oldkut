@@ -5,16 +5,19 @@ import { useRouter } from 'next/navigation';
 import { isAtLeast18 } from '@/lib/age';
 import { COUNTRIES } from '@/lib/countries';
 import { createClient } from '@/lib/supabase/client';
+import AvatarUpload from '@/components/AvatarUpload';
 
 const USERNAME_RE = /^[a-z0-9_]{3,20}$/;
 
 type UsernameStatus = 'idle' | 'invalid' | 'checking' | 'available' | 'taken';
 
 export default function CreateProfileForm({
+  userId,
   defaultName,
   defaultBirthday,
   defaultCountry,
 }: {
+  userId: string;
   defaultName?: string;
   defaultBirthday?: string;
   defaultCountry?: string;
@@ -24,7 +27,7 @@ export default function CreateProfileForm({
   const [username, setUsername] = useState('');
   const [usernameStatus, setUsernameStatus] = useState<UsernameStatus>('idle');
   const [displayName, setDisplayName] = useState(defaultName ?? '');
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [city, setCity] = useState('');
   const [country, setCountry] = useState(defaultCountry ?? '');
   const [birthday, setBirthday] = useState(defaultBirthday ?? '');
@@ -101,7 +104,7 @@ export default function CreateProfileForm({
       body: JSON.stringify({
         username: cleanUsername,
         displayName: displayName.trim(),
-        photoUrl: photoUrl.trim() || null,
+        photoUrl,
         city: city.trim() || null,
         country,
         birthday: birthday || null,
@@ -133,8 +136,8 @@ export default function CreateProfileForm({
       <label htmlFor="displayName">Nome</label>
       <input id="displayName" value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Seu nome" />
 
-      <label htmlFor="photoUrl">URL da foto (opcional)</label>
-      <input id="photoUrl" value={photoUrl} onChange={(e) => setPhotoUrl(e.target.value)} placeholder="https://..." />
+      <label>Foto do perfil</label>
+      <AvatarUpload userId={userId} value={photoUrl} onChange={setPhotoUrl} />
 
       <label htmlFor="city">Cidade</label>
       <input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Sua cidade" />
