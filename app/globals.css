@@ -456,6 +456,17 @@ body {
   font-weight: bold;
 }
 
+.oldkut-checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.oldkut-checkbox-row input[type='checkbox'] {
+  width: auto;
+  cursor: pointer;
+}
+
 .oldkut-google-btn {
   width: 100%;
   text-align: center;

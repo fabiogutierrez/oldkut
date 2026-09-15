@@ -44,6 +44,7 @@ export async function POST(request: Request) {
     country,
     birthday,
     bio: body?.bio ?? null,
+    is_private: Boolean(body?.isPrivate),
   });
 
   if (error) {

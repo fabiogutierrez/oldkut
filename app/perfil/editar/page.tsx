@@ -35,6 +35,7 @@ export default async function EditarPerfilPage() {
           defaultBirthday={profile.birthday ?? ''}
           defaultCountry={profile.country ?? ''}
           defaultBio={profile.bio ?? ''}
+          defaultIsPrivate={profile.is_private ?? false}
         />
       </div>
     </div>

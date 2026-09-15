@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import ProfileCard from '@/components/ProfileCard';
 import ScrapWall from '@/components/ScrapWall';
 import TestimonialWall from '@/components/TestimonialWall';
@@ -31,6 +33,7 @@ interface FriendProfile {
 export default async function PerfilPage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const { data: profile } = await supabase.from('oldkut_profiles').select('*').eq('username', username).maybeSingle();
   if (!profile) notFound();
@@ -38,6 +41,30 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  const isOwnProfile = user?.id === profile.user_id;
+  let canPost = isOwnProfile;
+  if (user && !isOwnProfile) {
+    const { data: viewerProfile } = await supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
+    canPost = !!viewerProfile;
+  }
+
+  let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
+  if (user && !isOwnProfile) {
+    const { data: rel } = await supabase
+      .from('oldkut_friendships')
+      .select('requester_user_id, status')
+      .or(
+        `and(requester_user_id.eq.${user.id},addressee_user_id.eq.${profile.user_id}),and(requester_user_id.eq.${profile.user_id},addressee_user_id.eq.${user.id})`
+      )
+      .maybeSingle();
+
+    if (rel) {
+      friendStatus = rel.status === 'accepted' ? 'accepted' : rel.requester_user_id === user.id ? 'pending_sent' : 'pending_received';
+    }
+  }
+
+  const canSeePrivateContent = isOwnProfile || friendStatus === 'accepted' || !profile.is_private;
 
   const { data: scrapsRaw } = await supabase
     .from('oldkut_scraps')
@@ -56,13 +83,6 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     authorDisplayName: s.author?.display_name ?? '?',
     authorPhotoUrl: s.author?.photo_url ?? null,
   }));
-
-  const isOwnProfile = user?.id === profile.user_id;
-  let canPost = isOwnProfile;
-  if (user && !isOwnProfile) {
-    const { data: viewerProfile } = await supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
-    canPost = !!viewerProfile;
-  }
 
   const { data: testimonialsRaw } = await supabase
     .from('oldkut_testimonials')
@@ -83,49 +103,39 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     authorPhotoUrl: t.author?.photo_url ?? null,
   }));
 
-  const [{ data: asRequester }, { data: asAddressee }] = await Promise.all([
-    supabase
-      .from('oldkut_friendships')
-      .select('addressee:oldkut_profiles!oldkut_friendships_addressee_user_id_fkey(user_id, username, display_name, photo_url)')
-      .eq('requester_user_id', profile.user_id)
-      .eq('status', 'accepted'),
-    supabase
-      .from('oldkut_friendships')
-      .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
-      .eq('addressee_user_id', profile.user_id)
-      .eq('status', 'accepted'),
-  ]);
+  let friends: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
+  let communities: { id: string; name: string; photoUrl: string | null }[] = [];
 
-  const friends = [
-    ...((asRequester as unknown as { addressee: FriendProfile | null }[] | null) ?? []).map((r) => r.addressee),
-    ...((asAddressee as unknown as { requester: FriendProfile | null }[] | null) ?? []).map((r) => r.requester),
-  ]
-    .filter((f): f is FriendProfile => f !== null)
-    .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
+  if (canSeePrivateContent) {
+    const [{ data: asRequester }, { data: asAddressee }] = await Promise.all([
+      supabase
+        .from('oldkut_friendships')
+        .select('addressee:oldkut_profiles!oldkut_friendships_addressee_user_id_fkey(user_id, username, display_name, photo_url)')
+        .eq('requester_user_id', profile.user_id)
+        .eq('status', 'accepted'),
+      supabase
+        .from('oldkut_friendships')
+        .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
+        .eq('addressee_user_id', profile.user_id)
+        .eq('status', 'accepted'),
+    ]);
 
-  const { data: communitiesRaw } = await supabase
-    .from('oldkut_community_members')
-    .select('community:oldkut_communities(id, name, photo_url)')
-    .eq('user_id', profile.user_id);
+    friends = [
+      ...((asRequester as unknown as { addressee: FriendProfile | null }[] | null) ?? []).map((r) => r.addressee),
+      ...((asAddressee as unknown as { requester: FriendProfile | null }[] | null) ?? []).map((r) => r.requester),
+    ]
+      .filter((f): f is FriendProfile => f !== null)
+      .map((f) => ({ userId: f.user_id, username: f.username, displayName: f.display_name, photoUrl: f.photo_url }));
 
-  const communities = ((communitiesRaw as unknown as { community: { id: string; name: string; photo_url: string | null } | null }[] | null) ?? [])
-    .map((c) => c.community)
-    .filter((c): c is { id: string; name: string; photo_url: string | null } => c !== null)
-    .map((c) => ({ id: c.id, name: c.name, photoUrl: c.photo_url }));
+    const { data: communitiesRaw } = await supabase
+      .from('oldkut_community_members')
+      .select('community:oldkut_communities(id, name, photo_url)')
+      .eq('user_id', profile.user_id);
 
-  let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
-  if (user && !isOwnProfile) {
-    const { data: rel } = await supabase
-      .from('oldkut_friendships')
-      .select('requester_user_id, status')
-      .or(
-        `and(requester_user_id.eq.${user.id},addressee_user_id.eq.${profile.user_id}),and(requester_user_id.eq.${profile.user_id},addressee_user_id.eq.${user.id})`
-      )
-      .maybeSingle();
-
-    if (rel) {
-      friendStatus = rel.status === 'accepted' ? 'accepted' : rel.requester_user_id === user.id ? 'pending_sent' : 'pending_received';
-    }
+    communities = ((communitiesRaw as unknown as { community: { id: string; name: string; photo_url: string | null } | null }[] | null) ?? [])
+      .map((c) => c.community)
+      .filter((c): c is { id: string; name: string; photo_url: string | null } => c !== null)
+      .map((c) => ({ id: c.id, name: c.name, photoUrl: c.photo_url }));
   }
 
   return (
@@ -136,7 +146,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
           <div className="oldkut-box">
             <div className="oldkut-box-body">
               <a href="/perfil/editar" className="oldkut-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
-                Editar perfil
+                {translate(locale, 'profile.editLink')}
               </a>
             </div>
           </div>
@@ -148,24 +158,39 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
             </div>
           </div>
         )}
-        <FriendsList friends={friends} />
-        <ProfileCommunities communities={communities} />
+        {canSeePrivateContent && (
+          <>
+            <FriendsList friends={friends} />
+            <ProfileCommunities communities={communities} />
+          </>
+        )}
       </div>
       <div className="oldkut-main">
-        <TestimonialWall
-          profileUserId={profile.user_id}
-          initialTestimonials={testimonials}
-          currentUserId={user?.id ?? null}
-          isOwnProfile={isOwnProfile}
-          canWrite={canPost && !isOwnProfile}
-        />
-        <ScrapWall
-          profileUserId={profile.user_id}
-          initialScraps={scraps}
-          currentUserId={user?.id ?? null}
-          isOwnProfile={isOwnProfile}
-          canPost={canPost}
-        />
+        {canSeePrivateContent ? (
+          <>
+            <TestimonialWall
+              profileUserId={profile.user_id}
+              initialTestimonials={testimonials}
+              currentUserId={user?.id ?? null}
+              isOwnProfile={isOwnProfile}
+              canWrite={canPost && !isOwnProfile}
+            />
+            <ScrapWall
+              profileUserId={profile.user_id}
+              initialScraps={scraps}
+              currentUserId={user?.id ?? null}
+              isOwnProfile={isOwnProfile}
+              canPost={canPost}
+            />
+          </>
+        ) : (
+          <div className="oldkut-box">
+            <div className="oldkut-box-title">{translate(locale, 'profile.privateNoticeTitle')}</div>
+            <div className="oldkut-box-body">
+              <p style={{ fontSize: 13, color: '#555' }}>{translate(locale, 'profile.privateNoticeBody')}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

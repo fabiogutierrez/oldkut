@@ -6,6 +6,7 @@ interface OldkutProfile {
   city: string | null;
   country: string | null;
   birthday: string | null;
+  is_private?: boolean;
 }
 
 function formatBirthday(iso: string) {
@@ -25,7 +26,10 @@ export default function ProfileCard({ profile }: { profile: OldkutProfile }) {
         ) : (
           <div className="oldkut-avatar">{initial}</div>
         )}
-        <div className="oldkut-profile-name">{profile.display_name}</div>
+        <div className="oldkut-profile-name">
+          {profile.display_name}
+          {profile.is_private && <span title="Perfil privado / Private profile / Perfil privado"> 🔒</span>}
+        </div>
         <div className="oldkut-profile-meta">
           @{profile.username}
           {location && (

@@ -22,6 +22,7 @@ export default function CreateProfileForm({
   defaultBirthday,
   defaultCountry,
   defaultBio,
+  defaultIsPrivate,
 }: {
   userId: string;
   mode?: 'create' | 'edit';
@@ -32,6 +33,7 @@ export default function CreateProfileForm({
   defaultBirthday?: string;
   defaultCountry?: string;
   defaultBio?: string;
+  defaultIsPrivate?: boolean;
 }) {
   const router = useRouter();
   const { t } = useLocale();
@@ -44,6 +46,7 @@ export default function CreateProfileForm({
   const [country, setCountry] = useState(defaultCountry ?? '');
   const [birthday, setBirthday] = useState(defaultBirthday ?? '');
   const [bio, setBio] = useState(defaultBio ?? '');
+  const [isPrivate, setIsPrivate] = useState(defaultIsPrivate ?? false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -125,6 +128,7 @@ export default function CreateProfileForm({
         country,
         birthday: birthday || null,
         bio: bio.trim() || null,
+        isPrivate,
       }),
     });
     setSubmitting(false);
@@ -179,6 +183,15 @@ export default function CreateProfileForm({
 
       <label htmlFor="bio">{t('profile.bioLabel')}</label>
       <textarea id="bio" rows={3} value={bio} onChange={(e) => setBio(e.target.value)} placeholder={t('profile.bioPlaceholder')} />
+
+      <label style={{ marginTop: 16 }}>{t('profile.privacyTitle')}</label>
+      <div className="oldkut-checkbox-row">
+        <input id="isPrivate" type="checkbox" checked={isPrivate} onChange={(e) => setIsPrivate(e.target.checked)} />
+        <label htmlFor="isPrivate" style={{ margin: 0, fontWeight: 'normal', cursor: 'pointer' }}>
+          {t('profile.privacyLabel')}
+        </label>
+      </div>
+      <p className="oldkut-hint">{t('profile.privacyHint')}</p>
 
       {error && <p className="oldkut-error">{error}</p>}
 
