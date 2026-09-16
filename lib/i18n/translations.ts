@@ -197,6 +197,15 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'footer.privacy': 'Privacidade',
     'footer.terms': 'Termos de Serviço',
+
+    'search.title': 'Buscar',
+    'search.placeholder': 'Buscar pessoas e comunidades...',
+    'search.submit': 'Buscar',
+    'search.peopleTitle': 'Pessoas',
+    'search.communitiesTitle': 'Comunidades',
+    'search.noResults': 'Nenhum resultado pra essa busca.',
+    'search.prompt': 'Digite um nome pra começar a buscar.',
+    'search.ariaLabel': 'Buscar',
   },
   en: {
     'nav.communities': 'communities',
@@ -386,6 +395,15 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'footer.privacy': 'Privacy',
     'footer.terms': 'Terms of Service',
+
+    'search.title': 'Search',
+    'search.placeholder': 'Search people and communities...',
+    'search.submit': 'Search',
+    'search.peopleTitle': 'People',
+    'search.communitiesTitle': 'Communities',
+    'search.noResults': 'No results for that search.',
+    'search.prompt': 'Type a name to start searching.',
+    'search.ariaLabel': 'Search',
   },
   es: {
     'nav.communities': 'comunidades',
@@ -575,6 +593,15 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'footer.privacy': 'Privacidad',
     'footer.terms': 'Términos de Servicio',
+
+    'search.title': 'Buscar',
+    'search.placeholder': 'Buscar personas y comunidades...',
+    'search.submit': 'Buscar',
+    'search.peopleTitle': 'Personas',
+    'search.communitiesTitle': 'Comunidades',
+    'search.noResults': 'No hay resultados para esa búsqueda.',
+    'search.prompt': 'Escribe un nombre para empezar a buscar.',
+    'search.ariaLabel': 'Buscar',
   },
 };
 

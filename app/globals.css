@@ -87,6 +87,28 @@ body {
   align-items: center;
 }
 
+.oldkut-icon-btn {
+  position: relative;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #e4ecfa;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  text-decoration: none;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.oldkut-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
 .oldkut-notif-btn {
   position: relative;
   background: none;
