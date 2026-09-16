@@ -30,11 +30,12 @@ body {
 
 .oldkut-wordmark {
   color: #fff;
-  font-size: 24px;
-  font-weight: bold;
-  font-style: italic;
+  font-family: var(--font-wordmark), Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  font-weight: 800;
+  font-style: normal;
   text-decoration: none;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.03em;
 }
 
 .oldkut-wordmark span {
@@ -609,9 +610,12 @@ body {
 }
 
 .oldkut-landing h1 {
-  font-size: 32px;
+  font-family: var(--font-wordmark), Arial, Helvetica, sans-serif;
+  font-size: 40px;
+  font-weight: 800;
   color: #315286;
-  font-style: italic;
+  font-style: normal;
+  letter-spacing: -0.03em;
   margin-bottom: 8px;
 }
 

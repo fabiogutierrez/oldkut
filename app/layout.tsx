@@ -5,6 +5,7 @@ import OldkutHeader from '@/components/OldkutHeader';
 import type { Notification } from '@/lib/notifications';
 import { LocaleProvider } from '@/lib/i18n/LocaleProvider';
 import { getLocale } from '@/lib/i18n/getLocale';
+import { wordmarkFont } from '@/lib/fonts';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -85,7 +86,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   }
 
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={wordmarkFont.variable}>
       <body>
         <LocaleProvider initialLocale={locale}>
           <div className="oldkut-shell">
