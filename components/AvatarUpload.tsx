@@ -56,7 +56,7 @@ export default function AvatarUpload({
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
         {value ? (
-          <img src={value} alt="Foto do perfil" className="oldkut-avatar" style={{ width: 72, height: 72, fontSize: 24 }} />
+          <img src={value} alt={t('profile.photoLabel')} className="oldkut-avatar" style={{ width: 72, height: 72, fontSize: 24 }} />
         ) : (
           <div className="oldkut-avatar" style={{ width: 72, height: 72, fontSize: 24 }}>
             ?

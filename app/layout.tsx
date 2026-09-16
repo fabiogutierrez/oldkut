@@ -5,6 +5,7 @@ import OldkutHeader from '@/components/OldkutHeader';
 import type { Notification } from '@/lib/notifications';
 import { LocaleProvider } from '@/lib/i18n/LocaleProvider';
 import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import { wordmarkFont } from '@/lib/fonts';
 import './globals.css';
 
@@ -93,7 +94,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <OldkutHeader username={username} notifications={notifications} />
             <div className="oldkut-container">{children}</div>
             <div className="oldkut-footer">
-              <Link href="/privacidade">Privacidade</Link>·<Link href="/termos">Termos de Serviço</Link>
+              <Link href="/privacidade">{translate(locale, 'footer.privacy')}</Link>·<Link href="/termos">{translate(locale, 'footer.terms')}</Link>
             </div>
           </div>
         </LocaleProvider>

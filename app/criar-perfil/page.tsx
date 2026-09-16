@@ -1,10 +1,13 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import CreateProfileForm from '@/components/CreateProfileForm';
 import LogoutButton from '@/components/LogoutButton';
 
 export default async function CriarPerfilPage() {
   const supabase = await createClient();
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -21,7 +24,7 @@ export default async function CriarPerfilPage() {
   return (
     <div className="oldkut-box">
       <div className="oldkut-box-title">
-        Criar seu perfil
+        {translate(locale, 'profile.createTitle')}
         <LogoutButton className="oldkut-box-title-action" />
       </div>
       <div className="oldkut-box-body">

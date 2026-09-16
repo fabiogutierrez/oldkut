@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import { getProfileAccess } from '@/lib/profileAccess';
 import ProfileCommunities from '@/components/ProfileCommunities';
 
@@ -13,6 +15,7 @@ interface CommunityRow {
 export default async function PerfilComunidadesPage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const { data: profile } = await supabase
     .from('oldkut_profiles')
@@ -46,7 +49,7 @@ export default async function PerfilComunidadesPage({ params }: { params: Promis
     <div>
       <div style={{ marginBottom: 12 }}>
         <Link href={`/perfil/${username}`} className="oldkut-hint">
-          ← voltar ao perfil de {profile.display_name}
+          {translate(locale, 'profile.backToProfile')}
         </Link>
       </div>
 
@@ -54,9 +57,9 @@ export default async function PerfilComunidadesPage({ params }: { params: Promis
         <ProfileCommunities communities={communities} />
       ) : (
         <div className="oldkut-box">
-          <div className="oldkut-box-title">Esse perfil é privado</div>
+          <div className="oldkut-box-title">{translate(locale, 'profile.privateNoticeTitle')}</div>
           <div className="oldkut-box-body">
-            <p style={{ fontSize: 13, color: '#555' }}>Adicione como amigo pra ver as comunidades.</p>
+            <p style={{ fontSize: 13, color: '#555' }}>{translate(locale, 'profile.privateNoticeBody')}</p>
           </div>
         </div>
       )}

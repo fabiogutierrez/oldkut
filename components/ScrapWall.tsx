@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 interface Scrap {
   id: string;
@@ -29,6 +30,7 @@ export default function ScrapWall({
   isOwnProfile: boolean;
   canPost: boolean;
 }) {
+  const { t } = useLocale();
   const [scraps, setScraps] = useState(initialScraps);
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -51,7 +53,7 @@ export default function ScrapWall({
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível enviar o recado.');
+      setError(body?.error ?? t('scrap.errorSubmit'));
       return;
     }
 
@@ -71,13 +73,16 @@ export default function ScrapWall({
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Recados{scraps.length > 0 ? ` (${scraps.length})` : ''}</div>
+      <div className="oldkut-box-title">
+        {t('scrap.title')}
+        {scraps.length > 0 ? ` (${scraps.length})` : ''}
+      </div>
       <div className="oldkut-box-body">
         {canPost && (
           <form className="oldkut-form" onSubmit={handleSubmit} style={{ marginBottom: 14 }}>
             <textarea
               rows={3}
-              placeholder="Deixe um recado..."
+              placeholder={t('scrap.placeholder')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               maxLength={2000}
@@ -85,7 +90,7 @@ export default function ScrapWall({
             {error && <p className="oldkut-error">{error}</p>}
             <div style={{ marginTop: 8 }}>
               <button type="submit" className="oldkut-btn" disabled={submitting || !message.trim()}>
-                {submitting ? 'Enviando...' : 'Enviar recado'}
+                {submitting ? t('scrap.submitting') : t('scrap.submit')}
               </button>
             </div>
           </form>
@@ -93,11 +98,11 @@ export default function ScrapWall({
 
         {!canPost && currentUserId && (
           <p className="oldkut-hint" style={{ marginBottom: 12 }}>
-            <a href="/criar-perfil">Crie seu perfil</a> pra deixar um recado.
+            <a href="/criar-perfil">{t('scrap.createProfileLink')}</a> {t('scrap.createProfileSuffix')}
           </p>
         )}
 
-        {scraps.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>Nenhum recado ainda.</p>}
+        {scraps.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>{t('scrap.empty')}</p>}
 
         {scraps.map((scrap) => (
           <div key={scrap.id} className="oldkut-scrap">
@@ -114,7 +119,7 @@ export default function ScrapWall({
               <div className="oldkut-scrap-message">{scrap.message}</div>
               {(isOwnProfile || scrap.authorUserId === currentUserId) && (
                 <button type="button" className="oldkut-scrap-delete" onClick={() => handleDelete(scrap.id)}>
-                  excluir
+                  {t('scrap.delete')}
                 </button>
               )}
             </div>

@@ -1,6 +1,8 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import { getProfileAccess } from '@/lib/profileAccess';
 import FriendsList from '@/components/FriendsList';
 
@@ -14,6 +16,7 @@ interface FriendProfile {
 export default async function AmigosPage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params;
   const supabase = await createClient();
+  const locale = await getLocale();
 
   const { data: profile } = await supabase
     .from('oldkut_profiles')
@@ -57,7 +60,7 @@ export default async function AmigosPage({ params }: { params: Promise<{ usernam
     <div>
       <div style={{ marginBottom: 12 }}>
         <Link href={`/perfil/${username}`} className="oldkut-hint">
-          ← voltar ao perfil de {profile.display_name}
+          {translate(locale, 'profile.backToProfile')}
         </Link>
       </div>
 
@@ -65,9 +68,9 @@ export default async function AmigosPage({ params }: { params: Promise<{ usernam
         <FriendsList friends={friends} />
       ) : (
         <div className="oldkut-box">
-          <div className="oldkut-box-title">Esse perfil é privado</div>
+          <div className="oldkut-box-title">{translate(locale, 'profile.privateNoticeTitle')}</div>
           <div className="oldkut-box-body">
-            <p style={{ fontSize: 13, color: '#555' }}>Adicione como amigo pra ver a lista de amigos.</p>
+            <p style={{ fontSize: 13, color: '#555' }}>{translate(locale, 'profile.privateNoticeBody')}</p>
           </div>
         </div>
       )}

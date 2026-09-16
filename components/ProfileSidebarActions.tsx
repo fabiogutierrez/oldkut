@@ -14,7 +14,7 @@ export default function ProfileSidebarActions({ username }: { username: string }
           {t('profile.editLink')}
         </Link>
         <Link href={`/perfil/${username}/amigos`} className="oldkut-btn oldkut-btn-block oldkut-btn-outline">
-          Amigos
+          {t('friend.sectionTitle')}
         </Link>
         <Link href="/comunidades" className="oldkut-btn oldkut-btn-block oldkut-btn-outline">
           {t('nav.communities')}

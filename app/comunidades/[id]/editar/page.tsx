@@ -1,10 +1,13 @@
 import { notFound, redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import CreateCommunityForm from '@/components/CreateCommunityForm';
 
 export default async function EditarComunidadePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const supabase = await createClient();
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -26,7 +29,7 @@ export default async function EditarComunidadePage({ params }: { params: Promise
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Editar comunidade</div>
+      <div className="oldkut-box-title">{translate(locale, 'community.editTitle')}</div>
       <div className="oldkut-box-body">
         <CreateCommunityForm
           mode="edit"

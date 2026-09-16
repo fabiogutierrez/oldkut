@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { Notification } from '@/lib/notifications';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 export default function NotificationBell({ initialNotifications }: { initialNotifications: Notification[] }) {
   const router = useRouter();
+  const { t } = useLocale();
   const [notifications, setNotifications] = useState(initialNotifications);
   const [open, setOpen] = useState(false);
   const [busyKey, setBusyKey] = useState<string | null>(null);
@@ -80,7 +82,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
 
   return (
     <div className="oldkut-notif" ref={panelRef}>
-      <button type="button" className="oldkut-notif-btn" onClick={() => setOpen((v) => !v)} aria-label="Notificações">
+      <button type="button" className="oldkut-notif-btn" onClick={() => setOpen((v) => !v)} aria-label={t('notification.title')}>
         <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
           <path d="M13.73 21a2 2 0 0 1-3.46 0" />
@@ -90,9 +92,9 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
 
       {open && (
         <div className="oldkut-notif-panel">
-          <div className="oldkut-box-title">Notificações</div>
+          <div className="oldkut-box-title">{t('notification.title')}</div>
           {notifications.length === 0 ? (
-            <p className="oldkut-notif-empty">Nenhuma notificação.</p>
+            <p className="oldkut-notif-empty">{t('notification.empty')}</p>
           ) : (
             <div className="oldkut-notif-list">
               {notifications.map((n) =>
@@ -107,7 +109,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                       <a href={`/perfil/${n.username}`} className="oldkut-request-name" style={{ display: 'block' }}>
                         {n.displayName}
                       </a>
-                      <span className="oldkut-notif-kind">quer ser seu amigo</span>
+                      <span className="oldkut-notif-kind">{t('friend.wantsToBeFriend')}</span>
                     </div>
                     <div className="oldkut-request-actions">
                       <button
@@ -116,7 +118,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                         disabled={busyKey === n.userId}
                         onClick={() => handleAcceptFriend(n.userId)}
                       >
-                        Aceitar
+                        {t('friend.accept')}
                       </button>
                       <button
                         type="button"
@@ -124,7 +126,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                         disabled={busyKey === n.userId}
                         onClick={() => handleRejectFriend(n.userId)}
                       >
-                        Recusar
+                        {t('friend.reject')}
                       </button>
                     </div>
                   </div>
@@ -139,7 +141,9 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                       <a href={`/perfil/${n.authorUsername}`} className="oldkut-request-name" style={{ display: 'block' }}>
                         {n.authorDisplayName}
                       </a>
-                      <span className="oldkut-notif-kind">deixou um depoimento: &quot;{n.message}&quot;</span>
+                      <span className="oldkut-notif-kind">
+                        {t('testimonial.leftOne')} &quot;{n.message}&quot;
+                      </span>
                     </div>
                     <div className="oldkut-request-actions">
                       <button
@@ -148,7 +152,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                         disabled={busyKey === n.id}
                         onClick={() => handleApproveTestimonial(n.id)}
                       >
-                        Aprovar
+                        {t('testimonial.approve')}
                       </button>
                       <button
                         type="button"
@@ -156,7 +160,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                         disabled={busyKey === n.id}
                         onClick={() => handleRejectTestimonial(n.id)}
                       >
-                        Recusar
+                        {t('friend.reject')}
                       </button>
                     </div>
                   </div>

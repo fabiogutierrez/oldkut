@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 interface Testimonial {
   id: string;
@@ -29,6 +30,7 @@ export default function TestimonialWall({
   isOwnProfile: boolean;
   canWrite: boolean;
 }) {
+  const { t } = useLocale();
   const [testimonials, setTestimonials] = useState(initialTestimonials);
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -53,12 +55,12 @@ export default function TestimonialWall({
 
     if (!res.ok) {
       const body = await res.json().catch(() => null);
-      setError(body?.error ?? 'Não foi possível enviar o depoimento.');
+      setError(body?.error ?? t('testimonial.errorSubmit'));
       return;
     }
 
     setMessage('');
-    setNotice('Depoimento enviado! Vai aparecer no perfil assim que for aprovado.');
+    setNotice(t('testimonial.submitSuccess'));
   };
 
   const handleDelete = async (id: string) => {
@@ -72,13 +74,16 @@ export default function TestimonialWall({
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Depoimentos{testimonials.length > 0 ? ` (${testimonials.length})` : ''}</div>
+      <div className="oldkut-box-title">
+        {t('testimonial.title')}
+        {testimonials.length > 0 ? ` (${testimonials.length})` : ''}
+      </div>
       <div className="oldkut-box-body">
         {canWrite && (
           <form className="oldkut-form" onSubmit={handleSubmit} style={{ marginBottom: 14 }}>
             <textarea
               rows={3}
-              placeholder="Escreva um depoimento..."
+              placeholder={t('testimonial.placeholder')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               maxLength={2000}
@@ -87,7 +92,7 @@ export default function TestimonialWall({
             {notice && <p className="oldkut-notice">{notice}</p>}
             <div style={{ marginTop: 8 }}>
               <button type="submit" className="oldkut-btn" disabled={submitting || !message.trim()}>
-                {submitting ? 'Enviando...' : 'Enviar depoimento'}
+                {submitting ? t('testimonial.submitting') : t('testimonial.submit')}
               </button>
             </div>
           </form>
@@ -95,28 +100,28 @@ export default function TestimonialWall({
 
         {!canWrite && !isOwnProfile && currentUserId && (
           <p className="oldkut-hint" style={{ marginBottom: 12 }}>
-            <a href="/criar-perfil">Crie seu perfil</a> pra escrever um depoimento.
+            <a href="/criar-perfil">{t('testimonial.createProfileLink')}</a> {t('testimonial.createProfileSuffix')}
           </p>
         )}
 
-        {testimonials.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>Nenhum depoimento ainda.</p>}
+        {testimonials.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>{t('testimonial.empty')}</p>}
 
-        {testimonials.map((t) => (
-          <div key={t.id} className="oldkut-scrap">
-            {t.authorPhotoUrl ? (
-              <img src={t.authorPhotoUrl} alt={t.authorDisplayName} className="oldkut-scrap-avatar" />
+        {testimonials.map((item) => (
+          <div key={item.id} className="oldkut-scrap">
+            {item.authorPhotoUrl ? (
+              <img src={item.authorPhotoUrl} alt={item.authorDisplayName} className="oldkut-scrap-avatar" />
             ) : (
-              <div className="oldkut-scrap-avatar">{t.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
+              <div className="oldkut-scrap-avatar">{item.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
             )}
             <div style={{ flex: 1 }}>
-              <a href={`/perfil/${t.authorUsername}`} className="oldkut-scrap-author">
-                {t.authorDisplayName}
+              <a href={`/perfil/${item.authorUsername}`} className="oldkut-scrap-author">
+                {item.authorDisplayName}
               </a>
-              <span className="oldkut-scrap-date">{formatDate(t.createdAt)}</span>
-              <div className="oldkut-scrap-message">{t.message}</div>
-              {(isOwnProfile || t.authorUserId === currentUserId) && (
-                <button type="button" className="oldkut-scrap-delete" onClick={() => handleDelete(t.id)}>
-                  excluir
+              <span className="oldkut-scrap-date">{formatDate(item.createdAt)}</span>
+              <div className="oldkut-scrap-message">{item.message}</div>
+              {(isOwnProfile || item.authorUserId === currentUserId) && (
+                <button type="button" className="oldkut-scrap-delete" onClick={() => handleDelete(item.id)}>
+                  {t('testimonial.delete')}
                 </button>
               )}
             </div>

@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import CreateCommunityForm from '@/components/CreateCommunityForm';
 
 export const metadata = {
@@ -8,6 +10,7 @@ export const metadata = {
 
 export default async function NovaComunidadePage() {
   const supabase = await createClient();
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -23,7 +26,7 @@ export default async function NovaComunidadePage() {
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Criar comunidade</div>
+      <div className="oldkut-box-title">{translate(locale, 'community.submitCreate')}</div>
       <div className="oldkut-box-body">
         <CreateCommunityForm userId={user.id} />
       </div>

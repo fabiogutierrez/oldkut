@@ -1,3 +1,7 @@
+'use client';
+
+import { useLocale } from '@/lib/i18n/LocaleProvider';
+
 interface Friend {
   userId: string;
   username: string;
@@ -14,14 +18,18 @@ export default function FriendsList({
   limit?: number;
   viewMoreHref?: string;
 }) {
+  const { t } = useLocale();
   const visible = limit ? friends.slice(0, limit) : friends;
   const hasMore = limit !== undefined && friends.length > limit;
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Amigos{friends.length > 0 ? ` (${friends.length})` : ''}</div>
+      <div className="oldkut-box-title">
+        {t('friend.sectionTitle')}
+        {friends.length > 0 ? ` (${friends.length})` : ''}
+      </div>
       <div className="oldkut-box-body">
-        {friends.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>Nenhum amigo ainda.</p>}
+        {friends.length === 0 && <p style={{ fontSize: 13, color: '#777' }}>{t('friend.noneYet')}</p>}
         <div className={limit ? 'oldkut-friend-grid oldkut-friend-grid-preview' : 'oldkut-friend-grid'}>
           {visible.map((f) => (
             <a key={f.userId} href={`/perfil/${f.username}`} className="oldkut-friend-item">
@@ -36,7 +44,7 @@ export default function FriendsList({
         </div>
         {hasMore && viewMoreHref && (
           <a href={viewMoreHref} className="oldkut-viewmore">
-            Ver mais →
+            {t('common.viewMore')}
           </a>
         )}
       </div>

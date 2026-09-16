@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo, useState } from 'react';
+import { useLocale } from '@/lib/i18n/LocaleProvider';
 
 interface Community {
   id: string;
@@ -12,6 +13,7 @@ interface Community {
 }
 
 export default function CommunitiesList({ communities }: { communities: Community[] }) {
+  const { t } = useLocale();
   const [query, setQuery] = useState('');
 
   const filtered = useMemo(() => {
@@ -25,7 +27,7 @@ export default function CommunitiesList({ communities }: { communities: Communit
       <input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Buscar comunidades..."
+        placeholder={t('community.searchPlaceholder')}
         style={{
           width: '100%',
           fontFamily: 'inherit',
@@ -38,7 +40,7 @@ export default function CommunitiesList({ communities }: { communities: Communit
         }}
       />
 
-      {filtered.length === 0 && <p style={{ fontSize: 13, color: '#666' }}>Nenhuma comunidade encontrada.</p>}
+      {filtered.length === 0 && <p style={{ fontSize: 13, color: '#666' }}>{t('community.searchEmpty')}</p>}
 
       {filtered.map((c) => (
         <a key={c.id} href={`/comunidades/${c.id}`} className="oldkut-community-row">
@@ -54,7 +56,7 @@ export default function CommunitiesList({ communities }: { communities: Communit
             </div>
             <div className="oldkut-community-desc">{c.description}</div>
             <div className="oldkut-community-count">
-              {c.memberCount} {c.memberCount === 1 ? 'membro' : 'membros'}
+              {c.memberCount} {c.memberCount === 1 ? t('community.memberSingular') : t('community.memberPlural')}
             </div>
           </div>
         </a>

@@ -129,6 +129,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.memberPlural': 'membros',
     'community.createdBy': 'Criada por',
     'community.editLink': 'Editar',
+    'community.editTitle': 'Editar comunidade',
     'community.delete': 'excluir',
     'community.like': 'curtir',
     'community.liked': 'curtiu',
@@ -153,6 +154,49 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'community.join': 'Participar',
     'community.leave': 'Sair da comunidade',
+
+    'common.viewMore': 'Ver mais →',
+
+    'friend.sectionTitle': 'Amigos',
+    'friend.noneYet': 'Nenhum amigo ainda.',
+    'friend.wantsToBeFriend': 'quer ser seu amigo',
+
+    'community.sectionTitle': 'Comunidades',
+    'community.noneYet': 'Nenhuma comunidade ainda.',
+    'community.searchPlaceholder': 'Buscar comunidades...',
+    'community.searchEmpty': 'Nenhuma comunidade encontrada.',
+
+    'scrap.title': 'Recados',
+    'scrap.placeholder': 'Deixe um recado...',
+    'scrap.submit': 'Enviar recado',
+    'scrap.submitting': 'Enviando...',
+    'scrap.empty': 'Nenhum recado ainda.',
+    'scrap.errorSubmit': 'Não foi possível enviar o recado.',
+    'scrap.createProfileLink': 'Crie seu perfil',
+    'scrap.createProfileSuffix': 'pra deixar um recado.',
+    'scrap.delete': 'excluir',
+
+    'testimonial.title': 'Depoimentos',
+    'testimonial.placeholder': 'Escreva um depoimento...',
+    'testimonial.submit': 'Enviar depoimento',
+    'testimonial.submitting': 'Enviando...',
+    'testimonial.submitSuccess': 'Depoimento enviado! Vai aparecer no perfil assim que for aprovado.',
+    'testimonial.empty': 'Nenhum depoimento ainda.',
+    'testimonial.errorSubmit': 'Não foi possível enviar o depoimento.',
+    'testimonial.createProfileLink': 'Crie seu perfil',
+    'testimonial.createProfileSuffix': 'pra escrever um depoimento.',
+    'testimonial.delete': 'excluir',
+    'testimonial.leftOne': 'deixou um depoimento:',
+    'testimonial.approve': 'Aprovar',
+
+    'notification.title': 'Notificações',
+    'notification.empty': 'Nenhuma notificação.',
+
+    'profile.createTitle': 'Criar seu perfil',
+    'profile.backToProfile': '← Voltar ao perfil',
+
+    'footer.privacy': 'Privacidade',
+    'footer.terms': 'Termos de Serviço',
   },
   en: {
     'nav.communities': 'communities',
@@ -274,6 +318,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.memberPlural': 'members',
     'community.createdBy': 'Created by',
     'community.editLink': 'Edit',
+    'community.editTitle': 'Edit community',
     'community.delete': 'delete',
     'community.like': 'like',
     'community.liked': 'liked',
@@ -298,6 +343,49 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'community.join': 'Join',
     'community.leave': 'Leave community',
+
+    'common.viewMore': 'View more →',
+
+    'friend.sectionTitle': 'Friends',
+    'friend.noneYet': 'No friends yet.',
+    'friend.wantsToBeFriend': 'wants to be your friend',
+
+    'community.sectionTitle': 'Communities',
+    'community.noneYet': 'No communities yet.',
+    'community.searchPlaceholder': 'Search communities...',
+    'community.searchEmpty': 'No communities found.',
+
+    'scrap.title': 'Scraps',
+    'scrap.placeholder': 'Leave a scrap...',
+    'scrap.submit': 'Send scrap',
+    'scrap.submitting': 'Sending...',
+    'scrap.empty': 'No scraps yet.',
+    'scrap.errorSubmit': "Couldn't send the scrap.",
+    'scrap.createProfileLink': 'Create your profile',
+    'scrap.createProfileSuffix': 'to leave a scrap.',
+    'scrap.delete': 'delete',
+
+    'testimonial.title': 'Testimonials',
+    'testimonial.placeholder': 'Write a testimonial...',
+    'testimonial.submit': 'Send testimonial',
+    'testimonial.submitting': 'Sending...',
+    'testimonial.submitSuccess': "Testimonial sent! It'll show up on the profile once approved.",
+    'testimonial.empty': 'No testimonials yet.',
+    'testimonial.errorSubmit': "Couldn't send the testimonial.",
+    'testimonial.createProfileLink': 'Create your profile',
+    'testimonial.createProfileSuffix': 'to write a testimonial.',
+    'testimonial.delete': 'delete',
+    'testimonial.leftOne': 'left a testimonial:',
+    'testimonial.approve': 'Approve',
+
+    'notification.title': 'Notifications',
+    'notification.empty': 'No notifications.',
+
+    'profile.createTitle': 'Create your profile',
+    'profile.backToProfile': '← Back to profile',
+
+    'footer.privacy': 'Privacy',
+    'footer.terms': 'Terms of Service',
   },
   es: {
     'nav.communities': 'comunidades',
@@ -419,6 +507,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.memberPlural': 'miembros',
     'community.createdBy': 'Creada por',
     'community.editLink': 'Editar',
+    'community.editTitle': 'Editar comunidad',
     'community.delete': 'eliminar',
     'community.like': 'me gusta',
     'community.liked': 'te gusta',
@@ -443,6 +532,49 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'community.join': 'Unirse',
     'community.leave': 'Salir de la comunidad',
+
+    'common.viewMore': 'Ver más →',
+
+    'friend.sectionTitle': 'Amigos',
+    'friend.noneYet': 'Aún no hay amigos.',
+    'friend.wantsToBeFriend': 'quiere ser tu amigo',
+
+    'community.sectionTitle': 'Comunidades',
+    'community.noneYet': 'Aún no hay comunidades.',
+    'community.searchPlaceholder': 'Buscar comunidades...',
+    'community.searchEmpty': 'No se encontraron comunidades.',
+
+    'scrap.title': 'Recados',
+    'scrap.placeholder': 'Deja un recado...',
+    'scrap.submit': 'Enviar recado',
+    'scrap.submitting': 'Enviando...',
+    'scrap.empty': 'Aún no hay recados.',
+    'scrap.errorSubmit': 'No se pudo enviar el recado.',
+    'scrap.createProfileLink': 'Crea tu perfil',
+    'scrap.createProfileSuffix': 'para dejar un recado.',
+    'scrap.delete': 'eliminar',
+
+    'testimonial.title': 'Testimonios',
+    'testimonial.placeholder': 'Escribe un testimonio...',
+    'testimonial.submit': 'Enviar testimonio',
+    'testimonial.submitting': 'Enviando...',
+    'testimonial.submitSuccess': '¡Testimonio enviado! Aparecerá en el perfil una vez aprobado.',
+    'testimonial.empty': 'Aún no hay testimonios.',
+    'testimonial.errorSubmit': 'No se pudo enviar el testimonio.',
+    'testimonial.createProfileLink': 'Crea tu perfil',
+    'testimonial.createProfileSuffix': 'para escribir un testimonio.',
+    'testimonial.delete': 'eliminar',
+    'testimonial.leftOne': 'dejó un testimonio:',
+    'testimonial.approve': 'Aprobar',
+
+    'notification.title': 'Notificaciones',
+    'notification.empty': 'No hay notificaciones.',
+
+    'profile.createTitle': 'Crea tu perfil',
+    'profile.backToProfile': '← Volver al perfil',
+
+    'footer.privacy': 'Privacidad',
+    'footer.terms': 'Términos de Servicio',
   },
 };
 
