@@ -17,18 +17,20 @@ body {
 
 .oldkut-topbar {
   background: #38598b;
-  background: linear-gradient(#5474a7, #38598b);
-  border-bottom: 3px solid #22385c;
+  background: linear-gradient(135deg, #5c7fb3, #2f4d78);
   padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+  box-shadow: 0 2px 10px rgba(15, 30, 60, 0.25);
+  position: relative;
+  z-index: 10;
 }
 
 .oldkut-wordmark {
   color: #fff;
-  font-size: 26px;
+  font-size: 24px;
   font-weight: bold;
   font-style: italic;
   text-decoration: none;
@@ -42,35 +44,40 @@ body {
 .oldkut-topbar-right {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
   font-size: 12px;
 }
 
-.oldkut-topbar-right a,
-.oldkut-topbar-right button {
-  color: #dbe6f7;
+.oldkut-topbar-right a {
+  color: #e4ecfa;
   text-decoration: none;
-  background: none;
-  border: none;
-  font: inherit;
-  cursor: pointer;
   font-size: 12px;
+  font-weight: bold;
+}
+
+.oldkut-topbar-right a:hover {
+  color: #fff;
 }
 
 .oldkut-lang-switcher {
-  background: #22385c;
-  color: #dbe6f7;
-  border: 1px solid #5474a7;
-  border-radius: 3px;
+  appearance: none;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
   font-size: 11px;
-  padding: 3px 4px;
+  font-weight: bold;
+  padding: 5px 22px 5px 12px;
   cursor: pointer;
+  background-image: linear-gradient(45deg, transparent 50%, #fff 50%), linear-gradient(135deg, #fff 50%, transparent 50%);
+  background-position: calc(100% - 12px) center, calc(100% - 8px) center;
+  background-size: 4px 4px, 4px 4px;
+  background-repeat: no-repeat;
+  transition: background-color 0.15s;
 }
 
-.oldkut-topbar-right a:hover,
-.oldkut-topbar-right button:hover {
-  text-decoration: underline;
-  color: #fff;
+.oldkut-lang-switcher:hover {
+  background-color: rgba(255, 255, 255, 0.22);
 }
 
 .oldkut-notif {
@@ -84,16 +91,27 @@ body {
   background: none;
   border: none;
   cursor: pointer;
-  font-size: 16px;
-  line-height: 1;
-  padding: 2px 4px;
+  color: #e4ecfa;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.oldkut-notif-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
 }
 
 .oldkut-notif-badge {
   position: absolute;
-  top: -4px;
-  right: -2px;
-  background: #d1373f;
+  top: 1px;
+  right: 1px;
+  background: #e3453f;
   color: #fff;
   font-size: 10px;
   font-weight: bold;
@@ -105,6 +123,7 @@ body {
   justify-content: center;
   padding: 0 3px;
   line-height: 1;
+  border: 2px solid #345c8f;
 }
 
 .oldkut-notif-panel {
@@ -172,10 +191,15 @@ body {
 }
 
 .oldkut-box-title-action {
+  background: none;
+  border: none;
+  font: inherit;
   font-size: 12px;
   font-weight: bold;
   color: #22385c;
   text-decoration: none;
+  cursor: pointer;
+  padding: 0;
 }
 
 .oldkut-box-title-action:hover {
@@ -509,6 +533,57 @@ body {
 .oldkut-btn:disabled {
   opacity: 0.6;
   cursor: default;
+}
+
+.oldkut-btn-block {
+  display: block;
+  width: 100%;
+  text-align: center;
+  text-decoration: none;
+  box-sizing: border-box;
+}
+
+.oldkut-btn-outline {
+  background: #fff;
+  color: #315286;
+  border-color: #a4bade;
+}
+
+.oldkut-btn-outline:hover {
+  background: #eaf0fa;
+}
+
+.oldkut-btn-ghost {
+  background: none;
+  border-color: transparent;
+  color: #9a4b4b;
+}
+
+.oldkut-btn-ghost:hover {
+  background: #fbeaea;
+  border-color: #f0d6d6;
+}
+
+.oldkut-sidebar-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.oldkut-columns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.oldkut-columns-item {
+  flex: 1 1 260px;
+  min-width: 0;
+}
+
+.oldkut-columns-item .oldkut-box {
+  margin-bottom: 0;
 }
 
 .oldkut-landing {

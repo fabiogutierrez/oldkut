@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import CreateProfileForm from '@/components/CreateProfileForm';
+import LogoutButton from '@/components/LogoutButton';
 
 export default async function CriarPerfilPage() {
   const supabase = await createClient();
@@ -19,7 +20,10 @@ export default async function CriarPerfilPage() {
 
   return (
     <div className="oldkut-box">
-      <div className="oldkut-box-title">Criar seu perfil</div>
+      <div className="oldkut-box-title">
+        Criar seu perfil
+        <LogoutButton className="oldkut-box-title-action" />
+      </div>
       <div className="oldkut-box-body">
         <CreateProfileForm
           userId={user.id}

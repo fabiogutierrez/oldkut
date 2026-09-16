@@ -8,6 +8,7 @@ import TestimonialWall from '@/components/TestimonialWall';
 import FriendButton from '@/components/FriendButton';
 import FriendsList from '@/components/FriendsList';
 import ProfileCommunities from '@/components/ProfileCommunities';
+import ProfileSidebarActions from '@/components/ProfileSidebarActions';
 
 interface ScrapAuthor {
   username: string | null;
@@ -142,15 +143,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     <div className="oldkut-layout">
       <div className="oldkut-sidebar">
         <ProfileCard profile={profile} />
-        {isOwnProfile && (
-          <div className="oldkut-box">
-            <div className="oldkut-box-body">
-              <a href="/perfil/editar" className="oldkut-btn" style={{ display: 'inline-block', textDecoration: 'none' }}>
-                {translate(locale, 'profile.editLink')}
-              </a>
-            </div>
-          </div>
-        )}
+        {isOwnProfile && <ProfileSidebarActions />}
         {!isOwnProfile && canPost && (
           <div className="oldkut-box">
             <div className="oldkut-box-body">
@@ -158,16 +151,18 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
             </div>
           </div>
         )}
-        {canSeePrivateContent && (
-          <>
-            <FriendsList friends={friends} />
-            <ProfileCommunities communities={communities} />
-          </>
-        )}
       </div>
       <div className="oldkut-main">
         {canSeePrivateContent ? (
           <>
+            <div className="oldkut-columns">
+              <div className="oldkut-columns-item">
+                <FriendsList friends={friends} />
+              </div>
+              <div className="oldkut-columns-item">
+                <ProfileCommunities communities={communities} />
+              </div>
+            </div>
             <TestimonialWall
               profileUserId={profile.user_id}
               initialTestimonials={testimonials}
