@@ -663,6 +663,60 @@ body {
   background: #dbe6f7;
 }
 
+.oldkut-landing-features-title {
+  font-size: 18px;
+  color: #315286;
+  margin: 44px 0 18px;
+}
+
+.oldkut-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+  text-align: left;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.oldkut-feature-card {
+  background: #fff;
+  border: 1px solid #a4bade;
+  border-radius: 6px;
+  padding: 16px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.oldkut-feature-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(49, 82, 134, 0.15);
+}
+
+.oldkut-feature-icon {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.oldkut-feature-title {
+  font-weight: bold;
+  color: #315286;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.oldkut-feature-desc {
+  font-size: 12.5px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.oldkut-landing-tagline {
+  margin-top: 40px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #315286;
+  font-style: italic;
+}
+
 .oldkut-error {
   color: #b34747;
   font-size: 12px;
