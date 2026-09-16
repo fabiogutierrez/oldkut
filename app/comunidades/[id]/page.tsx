@@ -202,7 +202,7 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
                   {members.map((m) => (
                     <a key={m.user_id} href={`/perfil/${m.username}`} className="oldkut-friend-item">
                       {m.photo_url ? (
-                        <img src={m.photo_url} alt={m.display_name} className="oldkut-friend-avatar" />
+                        <img src={m.photo_url} alt={m.display_name} className="oldkut-friend-avatar" loading="lazy" />
                       ) : (
                         <div className="oldkut-friend-avatar">{m.display_name?.[0]?.toUpperCase() ?? '?'}</div>
                       )}

@@ -114,7 +114,7 @@ function PostItem({
   return (
     <div className="oldkut-scrap">
       {post.authorPhotoUrl ? (
-        <img src={post.authorPhotoUrl} alt={post.authorDisplayName} className="oldkut-scrap-avatar" />
+        <img src={post.authorPhotoUrl} alt={post.authorDisplayName} className="oldkut-scrap-avatar" loading="lazy" />
       ) : (
         <div className="oldkut-scrap-avatar">{post.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
       )}

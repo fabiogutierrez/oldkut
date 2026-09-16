@@ -4,7 +4,34 @@ import { useState, type ChangeEvent } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import { useLocale } from '@/lib/i18n/LocaleProvider';
 
-const MAX_SIZE = 5 * 1024 * 1024;
+const MAX_SIZE = 8 * 1024 * 1024;
+const MAX_DIMENSION = 640;
+const JPEG_QUALITY = 0.82;
+
+async function resizeImage(file: File): Promise<File> {
+  try {
+    const bitmap = await createImageBitmap(file);
+    const scale = Math.min(1, MAX_DIMENSION / Math.max(bitmap.width, bitmap.height));
+    const width = Math.round(bitmap.width * scale);
+    const height = Math.round(bitmap.height * scale);
+
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+
+    ctx.drawImage(bitmap, 0, 0, width, height);
+    bitmap.close();
+
+    const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/jpeg', JPEG_QUALITY));
+    if (!blob) return file;
+
+    return new File([blob], file.name.replace(/\.\w+$/, '.jpg'), { type: 'image/jpeg' });
+  } catch {
+    return file;
+  }
+}
 
 export default function AvatarUpload({
   userId,
@@ -37,10 +64,10 @@ export default function AvatarUpload({
     }
 
     setUploading(true);
-    const ext = file.name.split('.').pop() || 'jpg';
-    const path = `${userId}/${Date.now()}.${ext}`;
+    const resized = await resizeImage(file);
+    const path = `${userId}/${Date.now()}.jpg`;
 
-    const { error: uploadError } = await supabase.storage.from('avatars').upload(path, file, { upsert: true });
+    const { error: uploadError } = await supabase.storage.from('avatars').upload(path, resized, { upsert: true });
     setUploading(false);
 
     if (uploadError) {

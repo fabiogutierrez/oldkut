@@ -99,7 +99,7 @@ export default async function BuscarPage({ searchParams }: { searchParams: Promi
             {people.map((p) => (
               <a key={p.user_id} href={`/perfil/${p.username}`} className="oldkut-community-row">
                 {p.photo_url ? (
-                  <img src={p.photo_url} alt={p.display_name} className="oldkut-community-avatar" />
+                  <img src={p.photo_url} alt={p.display_name} className="oldkut-community-avatar" loading="lazy" />
                 ) : (
                   <div className="oldkut-community-avatar">{p.display_name?.[0]?.toUpperCase() ?? '?'}</div>
                 )}
@@ -122,7 +122,7 @@ export default async function BuscarPage({ searchParams }: { searchParams: Promi
             {communities.map((c) => (
               <a key={c.id} href={`/comunidades/${c.id}`} className="oldkut-community-row">
                 {c.photo_url ? (
-                  <img src={c.photo_url} alt={c.name} className="oldkut-community-avatar" />
+                  <img src={c.photo_url} alt={c.name} className="oldkut-community-avatar" loading="lazy" />
                 ) : (
                   <div className="oldkut-community-avatar">{c.name?.[0]?.toUpperCase() ?? '?'}</div>
                 )}

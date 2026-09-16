@@ -109,7 +109,7 @@ export default function TestimonialWall({
         {testimonials.map((item) => (
           <div key={item.id} className="oldkut-scrap">
             {item.authorPhotoUrl ? (
-              <img src={item.authorPhotoUrl} alt={item.authorDisplayName} className="oldkut-scrap-avatar" />
+              <img src={item.authorPhotoUrl} alt={item.authorDisplayName} className="oldkut-scrap-avatar" loading="lazy" />
             ) : (
               <div className="oldkut-scrap-avatar">{item.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
             )}

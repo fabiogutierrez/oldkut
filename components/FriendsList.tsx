@@ -34,7 +34,7 @@ export default function FriendsList({
           {visible.map((f) => (
             <a key={f.userId} href={`/perfil/${f.username}`} className="oldkut-friend-item">
               {f.photoUrl ? (
-                <img src={f.photoUrl} alt={f.displayName} className="oldkut-friend-avatar" />
+                <img src={f.photoUrl} alt={f.displayName} className="oldkut-friend-avatar" loading="lazy" />
               ) : (
                 <div className="oldkut-friend-avatar">{f.displayName?.[0]?.toUpperCase() ?? '?'}</div>
               )}

@@ -33,7 +33,7 @@ export default function ProfileCommunities({
           {visible.map((c) => (
             <a key={c.id} href={`/comunidades/${c.id}`} className="oldkut-friend-item">
               {c.photoUrl ? (
-                <img src={c.photoUrl} alt={c.name} className="oldkut-friend-avatar" />
+                <img src={c.photoUrl} alt={c.name} className="oldkut-friend-avatar" loading="lazy" />
               ) : (
                 <div className="oldkut-friend-avatar">{c.name?.[0]?.toUpperCase() ?? '?'}</div>
               )}

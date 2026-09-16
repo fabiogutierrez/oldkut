@@ -45,7 +45,7 @@ export default function CommunitiesList({ communities }: { communities: Communit
       {filtered.map((c) => (
         <a key={c.id} href={`/comunidades/${c.id}`} className="oldkut-community-row">
           {c.photoUrl ? (
-            <img src={c.photoUrl} alt={c.name} className="oldkut-community-avatar" />
+            <img src={c.photoUrl} alt={c.name} className="oldkut-community-avatar" loading="lazy" />
           ) : (
             <div className="oldkut-community-avatar">{c.name?.[0]?.toUpperCase() ?? '?'}</div>
           )}

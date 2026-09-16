@@ -107,7 +107,7 @@ export default function ScrapWall({
         {scraps.map((scrap) => (
           <div key={scrap.id} className="oldkut-scrap">
             {scrap.authorPhotoUrl ? (
-              <img src={scrap.authorPhotoUrl} alt={scrap.authorDisplayName} className="oldkut-scrap-avatar" />
+              <img src={scrap.authorPhotoUrl} alt={scrap.authorDisplayName} className="oldkut-scrap-avatar" loading="lazy" />
             ) : (
               <div className="oldkut-scrap-avatar">{scrap.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
             )}

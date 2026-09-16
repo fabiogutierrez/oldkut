@@ -101,7 +101,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                 n.type === 'friend_request' ? (
                   <div key={`friend-${n.userId}`} className="oldkut-request-row">
                     {n.photoUrl ? (
-                      <img src={n.photoUrl} alt={n.displayName} className="oldkut-request-avatar" />
+                      <img src={n.photoUrl} alt={n.displayName} className="oldkut-request-avatar" loading="lazy" />
                     ) : (
                       <div className="oldkut-request-avatar">{n.displayName?.[0]?.toUpperCase() ?? '?'}</div>
                     )}
@@ -133,7 +133,7 @@ export default function NotificationBell({ initialNotifications }: { initialNoti
                 ) : (
                   <div key={`testimonial-${n.id}`} className="oldkut-request-row">
                     {n.authorPhotoUrl ? (
-                      <img src={n.authorPhotoUrl} alt={n.authorDisplayName} className="oldkut-request-avatar" />
+                      <img src={n.authorPhotoUrl} alt={n.authorDisplayName} className="oldkut-request-avatar" loading="lazy" />
                     ) : (
                       <div className="oldkut-request-avatar">{n.authorDisplayName?.[0]?.toUpperCase() ?? '?'}</div>
                     )}
