@@ -4,14 +4,25 @@ interface Community {
   photoUrl: string | null;
 }
 
-export default function ProfileCommunities({ communities }: { communities: Community[] }) {
+export default function ProfileCommunities({
+  communities,
+  limit,
+  viewMoreHref,
+}: {
+  communities: Community[];
+  limit?: number;
+  viewMoreHref?: string;
+}) {
+  const visible = limit ? communities.slice(0, limit) : communities;
+  const hasMore = limit !== undefined && communities.length > limit;
+
   return (
     <div className="oldkut-box">
       <div className="oldkut-box-title">Comunidades{communities.length > 0 ? ` (${communities.length})` : ''}</div>
       <div className="oldkut-box-body">
         {communities.length === 0 && <p style={{ fontSize: 13, color: '#666' }}>Nenhuma comunidade ainda.</p>}
-        <div className="oldkut-friend-grid">
-          {communities.map((c) => (
+        <div className={limit ? 'oldkut-friend-grid oldkut-friend-grid-preview' : 'oldkut-friend-grid'}>
+          {visible.map((c) => (
             <a key={c.id} href={`/comunidades/${c.id}`} className="oldkut-friend-item">
               {c.photoUrl ? (
                 <img src={c.photoUrl} alt={c.name} className="oldkut-friend-avatar" />
@@ -22,6 +33,11 @@ export default function ProfileCommunities({ communities }: { communities: Commu
             </a>
           ))}
         </div>
+        {hasMore && viewMoreHref && (
+          <a href={viewMoreHref} className="oldkut-viewmore">
+            Ver mais →
+          </a>
+        )}
       </div>
     </div>
   );

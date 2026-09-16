@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getLocale } from '@/lib/i18n/getLocale';
 import { translate } from '@/lib/i18n/translations';
+import { getProfileAccess } from '@/lib/profileAccess';
 import ProfileCard from '@/components/ProfileCard';
 import ScrapWall from '@/components/ScrapWall';
 import TestimonialWall from '@/components/TestimonialWall';
@@ -43,29 +44,13 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isOwnProfile = user?.id === profile.user_id;
+  const { isOwnProfile, friendStatus, canSeePrivateContent } = await getProfileAccess(supabase, profile, user?.id);
+
   let canPost = isOwnProfile;
   if (user && !isOwnProfile) {
     const { data: viewerProfile } = await supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
     canPost = !!viewerProfile;
   }
-
-  let friendStatus: 'none' | 'pending_sent' | 'pending_received' | 'accepted' = 'none';
-  if (user && !isOwnProfile) {
-    const { data: rel } = await supabase
-      .from('oldkut_friendships')
-      .select('requester_user_id, status')
-      .or(
-        `and(requester_user_id.eq.${user.id},addressee_user_id.eq.${profile.user_id}),and(requester_user_id.eq.${profile.user_id},addressee_user_id.eq.${user.id})`
-      )
-      .maybeSingle();
-
-    if (rel) {
-      friendStatus = rel.status === 'accepted' ? 'accepted' : rel.requester_user_id === user.id ? 'pending_sent' : 'pending_received';
-    }
-  }
-
-  const canSeePrivateContent = isOwnProfile || friendStatus === 'accepted' || !profile.is_private;
 
   const { data: scrapsRaw } = await supabase
     .from('oldkut_scraps')
@@ -157,10 +142,10 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
           <>
             <div className="oldkut-columns">
               <div className="oldkut-columns-item">
-                <FriendsList friends={friends} />
+                <FriendsList friends={friends} limit={8} viewMoreHref={`/perfil/${username}/amigos`} />
               </div>
               <div className="oldkut-columns-item">
-                <ProfileCommunities communities={communities} />
+                <ProfileCommunities communities={communities} limit={8} viewMoreHref={`/perfil/${username}/comunidades`} />
               </div>
             </div>
             <TestimonialWall

@@ -247,6 +247,23 @@ body {
   gap: 10px;
 }
 
+.oldkut-friend-grid-preview {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.oldkut-viewmore {
+  display: inline-block;
+  margin-top: 10px;
+  font-size: 12px;
+  font-weight: bold;
+  color: #315286;
+  text-decoration: none;
+}
+
+.oldkut-viewmore:hover {
+  text-decoration: underline;
+}
+
 .oldkut-friend-item {
   text-align: center;
   text-decoration: none;
