@@ -1,6 +1,9 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getLocale } from '@/lib/i18n/getLocale';
+import { translate } from '@/lib/i18n/translations';
 import CreateProfileForm from '@/components/CreateProfileForm';
+import DeleteAccountButton from '@/components/DeleteAccountButton';
 
 export const metadata = {
   title: 'Editar perfil — oldkut',
@@ -8,6 +11,7 @@ export const metadata = {
 
 export default async function EditarPerfilPage() {
   const supabase = await createClient();
+  const locale = await getLocale();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -22,22 +26,31 @@ export default async function EditarPerfilPage() {
   }
 
   return (
-    <div className="oldkut-box">
-      <div className="oldkut-box-title">Editar perfil</div>
-      <div className="oldkut-box-body">
-        <CreateProfileForm
-          mode="edit"
-          userId={user.id}
-          defaultUsername={profile.username}
-          defaultName={profile.display_name}
-          defaultPhotoUrl={profile.photo_url}
-          defaultCity={profile.city ?? ''}
-          defaultBirthday={profile.birthday ?? ''}
-          defaultCountry={profile.country ?? ''}
-          defaultBio={profile.bio ?? ''}
-          defaultIsPrivate={profile.is_private ?? false}
-        />
+    <>
+      <div className="oldkut-box">
+        <div className="oldkut-box-title">Editar perfil</div>
+        <div className="oldkut-box-body">
+          <CreateProfileForm
+            mode="edit"
+            userId={user.id}
+            defaultUsername={profile.username}
+            defaultName={profile.display_name}
+            defaultPhotoUrl={profile.photo_url}
+            defaultCity={profile.city ?? ''}
+            defaultBirthday={profile.birthday ?? ''}
+            defaultCountry={profile.country ?? ''}
+            defaultBio={profile.bio ?? ''}
+            defaultIsPrivate={profile.is_private ?? false}
+          />
+        </div>
       </div>
-    </div>
+
+      <div className="oldkut-box oldkut-danger-zone">
+        <div className="oldkut-box-title">{translate(locale, 'account.dangerZoneTitle')}</div>
+        <div className="oldkut-box-body">
+          <DeleteAccountButton />
+        </div>
+      </div>
+    </>
   );
 }

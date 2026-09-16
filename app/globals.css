@@ -582,6 +582,28 @@ body {
   border-color: #f0d6d6;
 }
 
+.oldkut-btn-danger {
+  background: #c0392b;
+  background: linear-gradient(#d9584a, #c0392b);
+  border-color: #9c2c20;
+  color: #fff;
+}
+
+.oldkut-btn-danger:hover {
+  background: #cc4433;
+}
+
+.oldkut-danger-zone {
+  border-color: #e6b8b8;
+}
+
+.oldkut-danger-zone .oldkut-box-title {
+  background: #fbeaea;
+  background: linear-gradient(#fdf1f1, #fbeaea);
+  border-bottom-color: #e6b8b8;
+  color: #9c2c20;
+}
+
 .oldkut-sidebar-actions {
   display: flex;
   flex-direction: column;

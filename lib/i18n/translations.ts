@@ -113,6 +113,14 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.replySubmit': 'Responder',
     'community.replySubmitting': 'Enviando...',
 
+    'account.dangerZoneTitle': 'Zona de perigo',
+    'account.deleteWarning':
+      'Ao excluir sua conta, seu perfil, recados, depoimentos, amigos, comunidades criadas e todas as suas publicações são apagados permanentemente. Essa ação não pode ser desfeita.',
+    'account.deleteConfirmLabel': 'Entendo que essa ação é permanente e não pode ser desfeita.',
+    'account.deleteButton': 'Excluir minha conta permanentemente',
+    'account.deleting': 'Excluindo...',
+    'account.deleteError': 'Não foi possível excluir a conta. Tente novamente.',
+
     'friend.add': 'Adicionar amigo',
     'friend.pendingSent': 'Pedido enviado — cancelar',
     'friend.accept': 'Aceitar',
@@ -226,6 +234,14 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.replySubmit': 'Reply',
     'community.replySubmitting': 'Sending...',
 
+    'account.dangerZoneTitle': 'Danger zone',
+    'account.deleteWarning':
+      'Deleting your account permanently removes your profile, scraps, testimonials, friends, communities you created, and all your posts. This cannot be undone.',
+    'account.deleteConfirmLabel': 'I understand this action is permanent and cannot be undone.',
+    'account.deleteButton': 'Permanently delete my account',
+    'account.deleting': 'Deleting...',
+    'account.deleteError': "Couldn't delete the account. Try again.",
+
     'friend.add': 'Add friend',
     'friend.pendingSent': 'Request sent — cancel',
     'friend.accept': 'Accept',
@@ -338,6 +354,14 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'community.replyPlaceholder': 'Escribe una respuesta...',
     'community.replySubmit': 'Responder',
     'community.replySubmitting': 'Enviando...',
+
+    'account.dangerZoneTitle': 'Zona de peligro',
+    'account.deleteWarning':
+      'Al eliminar tu cuenta, tu perfil, recados, testimonios, amigos, comunidades creadas y todas tus publicaciones se borran de forma permanente. Esta acción no se puede deshacer.',
+    'account.deleteConfirmLabel': 'Entiendo que esta acción es permanente y no se puede deshacer.',
+    'account.deleteButton': 'Eliminar mi cuenta permanentemente',
+    'account.deleting': 'Eliminando...',
+    'account.deleteError': 'No se pudo eliminar la cuenta. Intenta de nuevo.',
 
     'friend.add': 'Agregar amigo',
     'friend.pendingSent': 'Solicitud enviada — cancelar',
