@@ -30,6 +30,7 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(authError ? t('auth.errorAuth') : null);
   const [notice, setNotice] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [forgotSubmitting, setForgotSubmitting] = useState(false);
 
   const handleGoogle = () => {
     supabase.auth.signInWithOAuth({
@@ -95,6 +96,24 @@ function LoginForm() {
     router.refresh();
   };
 
+  const handleForgotPassword = async () => {
+    setError(null);
+    setNotice(null);
+
+    const trimmedEmail = email.trim();
+    if (!trimmedEmail) {
+      setError(t('auth.errorForgotEmail'));
+      return;
+    }
+
+    setForgotSubmitting(true);
+    await supabase.auth.resetPasswordForEmail(trimmedEmail, {
+      redirectTo: `${window.location.origin}/auth/callback?next=/redefinir-senha`,
+    });
+    setForgotSubmitting(false);
+    setNotice(t('auth.forgotSuccess'));
+  };
+
   return (
     <div className="oldkut-box" style={{ maxWidth: 380, margin: '30px auto' }}>
       <div className="oldkut-box-title">{mode === 'signup' ? t('auth.signup') : t('auth.login')}</div>
@@ -125,6 +144,18 @@ function LoginForm() {
             onChange={(e) => setPassword(e.target.value)}
             placeholder={mode === 'signup' ? t('auth.passwordPlaceholderSignup') : t('auth.passwordPlaceholderSignin')}
           />
+
+          {mode === 'signin' && (
+            <button
+              type="button"
+              className="oldkut-link-btn"
+              style={{ marginTop: 6 }}
+              disabled={forgotSubmitting}
+              onClick={handleForgotPassword}
+            >
+              {forgotSubmitting ? t('auth.submitting') : t('auth.forgotPassword')}
+            </button>
+          )}
 
           {mode === 'signup' && (
             <>

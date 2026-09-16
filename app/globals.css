@@ -553,6 +553,26 @@ body {
   cursor: default;
 }
 
+.oldkut-link-btn {
+  background: none;
+  border: none;
+  font: inherit;
+  font-size: 12px;
+  color: #315286;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+}
+
+.oldkut-link-btn:hover {
+  text-decoration: underline;
+}
+
+.oldkut-link-btn:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .oldkut-btn-block {
   display: block;
   width: 100%;
