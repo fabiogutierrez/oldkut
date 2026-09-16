@@ -128,7 +128,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     <div className="oldkut-layout">
       <div className="oldkut-sidebar">
         <ProfileCard profile={profile} />
-        {isOwnProfile && <ProfileSidebarActions />}
+        {isOwnProfile && <ProfileSidebarActions username={username} />}
         {!isOwnProfile && canPost && (
           <div className="oldkut-box">
             <div className="oldkut-box-body">
