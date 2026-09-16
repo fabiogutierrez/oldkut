@@ -43,23 +43,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   let notifications: Notification[] = [];
 
   if (user) {
-    const { data } = await supabase.from('oldkut_profiles').select('username').eq('user_id', user.id).maybeSingle();
-    username = data?.username ?? null;
+    const [{ data: profileData }, { data: pendingFriendsRaw }, { data: pendingTestimonialsRaw }] = await Promise.all([
+      supabase.from('oldkut_profiles').select('username').eq('user_id', user.id).maybeSingle(),
+      supabase
+        .from('oldkut_friendships')
+        .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
+        .eq('addressee_user_id', user.id)
+        .eq('status', 'pending'),
+      supabase
+        .from('oldkut_testimonials')
+        .select('id, message, author:oldkut_profiles!oldkut_testimonials_author_user_id_fkey(username, display_name, photo_url)')
+        .eq('profile_user_id', user.id)
+        .eq('status', 'pending'),
+    ]);
+
+    username = profileData?.username ?? null;
 
     if (username) {
-      const [{ data: pendingFriendsRaw }, { data: pendingTestimonialsRaw }] = await Promise.all([
-        supabase
-          .from('oldkut_friendships')
-          .select('requester:oldkut_profiles!oldkut_friendships_requester_user_id_fkey(user_id, username, display_name, photo_url)')
-          .eq('addressee_user_id', user.id)
-          .eq('status', 'pending'),
-        supabase
-          .from('oldkut_testimonials')
-          .select('id, message, author:oldkut_profiles!oldkut_testimonials_author_user_id_fkey(username, display_name, photo_url)')
-          .eq('profile_user_id', user.id)
-          .eq('status', 'pending'),
-      ]);
-
       const friendNotifications: Notification[] = ((pendingFriendsRaw as unknown as { requester: RequesterProfile | null }[] | null) ?? [])
         .map((r) => r.requester)
         .filter((r): r is RequesterProfile => r !== null)

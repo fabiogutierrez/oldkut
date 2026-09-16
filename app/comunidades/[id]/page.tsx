@@ -42,24 +42,28 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
   const supabase = await createClient();
   const locale = await getLocale();
 
-  const { data: community } = await supabase
-    .from('oldkut_communities')
-    .select(
-      'id, name, description, photo_url, creator_user_id, is_private, creator:oldkut_profiles!oldkut_communities_creator_user_id_fkey(username, display_name)'
-    )
-    .eq('id', id)
-    .maybeSingle();
+  const [
+    { data: community },
+    {
+      data: { user },
+    },
+    { data: membersRaw },
+  ] = await Promise.all([
+    supabase
+      .from('oldkut_communities')
+      .select(
+        'id, name, description, photo_url, creator_user_id, is_private, creator:oldkut_profiles!oldkut_communities_creator_user_id_fkey(username, display_name)'
+      )
+      .eq('id', id)
+      .maybeSingle(),
+    supabase.auth.getUser(),
+    supabase
+      .from('oldkut_community_members')
+      .select('user:oldkut_profiles!oldkut_community_members_user_id_fkey(user_id, username, display_name, photo_url)')
+      .eq('community_id', id),
+  ]);
 
   if (!community) notFound();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const { data: membersRaw } = await supabase
-    .from('oldkut_community_members')
-    .select('user:oldkut_profiles!oldkut_community_members_user_id_fkey(user_id, username, display_name, photo_url)')
-    .eq('community_id', id);
 
   const members = ((membersRaw as unknown as { user: MemberProfile | null }[] | null) ?? [])
     .map((m) => m.user)
@@ -67,13 +71,24 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
 
   const isMember =
     !!user && (community.creator_user_id === user.id || members.some((m) => m.user_id === user.id));
-  let canAct = false;
-  if (user) {
-    const { data: viewerProfile } = await supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle();
-    canAct = !!viewerProfile;
-  }
 
   const canSeeContent = !community.is_private || isMember;
+
+  const [viewerProfileResult, postsResult] = await Promise.all([
+    user ? supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+    canSeeContent
+      ? supabase
+          .from('oldkut_community_posts')
+          .select(
+            'id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_posts_author_user_id_fkey(username, display_name, photo_url), likes:oldkut_community_post_likes(user_id), replies:oldkut_community_post_replies(id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_post_replies_author_user_id_fkey(username, display_name, photo_url))'
+          )
+          .eq('community_id', id)
+          .order('created_at', { ascending: false })
+      : Promise.resolve({ data: null }),
+  ]);
+
+  const canAct = !!viewerProfileResult.data;
+  const postsRaw = postsResult.data;
 
   let posts: {
     id: string;
@@ -97,14 +112,6 @@ export default async function ComunidadePage({ params }: { params: Promise<{ id:
   }[] = [];
 
   if (canSeeContent) {
-    const { data: postsRaw } = await supabase
-      .from('oldkut_community_posts')
-      .select(
-        'id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_posts_author_user_id_fkey(username, display_name, photo_url), likes:oldkut_community_post_likes(user_id), replies:oldkut_community_post_replies(id, message, created_at, author_user_id, author:oldkut_profiles!oldkut_community_post_replies_author_user_id_fkey(username, display_name, photo_url))'
-      )
-      .eq('community_id', id)
-      .order('created_at', { ascending: false });
-
     posts = ((postsRaw as unknown as PostRow[]) ?? []).map((p) => ({
       id: p.id,
       message: p.message,
