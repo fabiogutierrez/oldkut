@@ -49,7 +49,8 @@ export async function POST(request: Request) {
   });
 
   if (error) {
-    const message = error.code === '23505' ? 'Esse nome de usuário já está em uso.' : 'Não foi possível salvar o perfil.';
+    console.error('Erro ao salvar perfil:', error);
+    const message = error.code === '23505' ? 'Esse nome de usuário já está em uso.' : `Não foi possível salvar o perfil. (${error.message})`;
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
