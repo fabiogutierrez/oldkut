@@ -23,6 +23,7 @@ export default function CreateProfileForm({
   defaultCountry,
   defaultBio,
   defaultIsPrivate,
+  defaultHideVisits,
 }: {
   userId: string;
   mode?: 'create' | 'edit';
@@ -34,6 +35,7 @@ export default function CreateProfileForm({
   defaultCountry?: string;
   defaultBio?: string;
   defaultIsPrivate?: boolean;
+  defaultHideVisits?: boolean;
 }) {
   const router = useRouter();
   const { t } = useLocale();
@@ -47,6 +49,7 @@ export default function CreateProfileForm({
   const [birthday, setBirthday] = useState(defaultBirthday ?? '');
   const [bio, setBio] = useState(defaultBio ?? '');
   const [isPrivate, setIsPrivate] = useState(defaultIsPrivate ?? false);
+  const [hideVisits, setHideVisits] = useState(defaultHideVisits ?? false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -129,6 +132,7 @@ export default function CreateProfileForm({
         birthday: birthday || null,
         bio: bio.trim() || null,
         isPrivate,
+        hideVisits,
       }),
     });
     setSubmitting(false);
@@ -192,6 +196,14 @@ export default function CreateProfileForm({
         </label>
       </div>
       <p className="oldkut-hint">{t('profile.privacyHint')}</p>
+
+      <div className="oldkut-checkbox-row" style={{ marginTop: 8 }}>
+        <input id="hideVisits" type="checkbox" checked={hideVisits} onChange={(e) => setHideVisits(e.target.checked)} />
+        <label htmlFor="hideVisits" style={{ margin: 0, fontWeight: 'normal', cursor: 'pointer' }}>
+          {t('profile.hideVisitsLabel')}
+        </label>
+      </div>
+      <p className="oldkut-hint">{t('profile.hideVisitsHint')}</p>
 
       {error && <p className="oldkut-error">{error}</p>}
 

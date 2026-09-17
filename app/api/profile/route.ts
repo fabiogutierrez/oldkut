@@ -45,6 +45,7 @@ export async function POST(request: Request) {
     birthday,
     bio: body?.bio ?? null,
     is_private: Boolean(body?.isPrivate),
+    hide_visits: Boolean(body?.hideVisits),
   });
 
   if (error) {

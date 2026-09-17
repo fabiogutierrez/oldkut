@@ -41,6 +41,7 @@ export default async function EditarPerfilPage() {
             defaultCountry={profile.country ?? ''}
             defaultBio={profile.bio ?? ''}
             defaultIsPrivate={profile.is_private ?? false}
+            defaultHideVisits={profile.hide_visits ?? false}
           />
         </div>
       </div>

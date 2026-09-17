@@ -10,6 +10,7 @@ import FriendButton from '@/components/FriendButton';
 import FriendsList from '@/components/FriendsList';
 import ProfileCommunities from '@/components/ProfileCommunities';
 import ProfileSidebarActions from '@/components/ProfileSidebarActions';
+import ProfileVisits from '@/components/ProfileVisits';
 
 interface ScrapAuthor {
   username: string | null;
@@ -67,10 +68,21 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
 
   const [{ isOwnProfile, friendStatus, canSeePrivateContent }, viewerProfileResult] = await Promise.all([
     getProfileAccess(supabase, profile, user?.id),
-    user ? supabase.from('oldkut_profiles').select('user_id').eq('user_id', user.id).maybeSingle() : Promise.resolve({ data: null }),
+    user
+      ? supabase.from('oldkut_profiles').select('user_id, hide_visits').eq('user_id', user.id).maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
 
   const canPost = user?.id === profile.user_id || !!viewerProfileResult.data;
+
+  if (user && !isOwnProfile && viewerProfileResult.data && !viewerProfileResult.data.hide_visits) {
+    await supabase
+      .from('oldkut_profile_visits')
+      .upsert(
+        { profile_user_id: profile.user_id, visitor_user_id: user.id, visited_at: new Date().toISOString() },
+        { onConflict: 'profile_user_id,visitor_user_id,visit_day' }
+      );
+  }
 
   const scraps = ((scrapsRaw as unknown as ScrapRow[]) ?? []).map((s) => ({
     id: s.id,
@@ -94,6 +106,34 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
 
   let friends: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
   let communities: { id: string; name: string; photoUrl: string | null }[] = [];
+  let visitCount = 0;
+  let visitors: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
+
+  if (isOwnProfile) {
+    const [{ count }, { data: visitsRaw }] = await Promise.all([
+      supabase.from('oldkut_profile_visits').select('*', { count: 'exact', head: true }).eq('profile_user_id', profile.user_id),
+      supabase
+        .from('oldkut_profile_visits')
+        .select('visited_at, visitor:oldkut_profiles!oldkut_profile_visits_visitor_user_id_fkey(user_id, username, display_name, photo_url)')
+        .eq('profile_user_id', profile.user_id)
+        .order('visited_at', { ascending: false })
+        .limit(50),
+    ]);
+
+    visitCount = count ?? 0;
+
+    const seen = new Set<string>();
+    visitors = ((visitsRaw as unknown as { visitor: FriendProfile | null }[] | null) ?? [])
+      .map((v) => v.visitor)
+      .filter((v): v is FriendProfile => v !== null)
+      .filter((v) => {
+        if (seen.has(v.user_id)) return false;
+        seen.add(v.user_id);
+        return true;
+      })
+      .slice(0, 8)
+      .map((v) => ({ userId: v.user_id, username: v.username, displayName: v.display_name, photoUrl: v.photo_url }));
+  }
 
   if (canSeePrivateContent) {
     const [{ data: asRequester }, { data: asAddressee }, { data: communitiesRaw }] = await Promise.all([
@@ -128,6 +168,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
       <div className="oldkut-sidebar">
         <ProfileCard profile={profile} />
         {isOwnProfile && <ProfileSidebarActions username={username} />}
+        {isOwnProfile && <ProfileVisits totalCount={visitCount} visitors={visitors} />}
         {!isOwnProfile && canPost && (
           <div className="oldkut-box">
             <div className="oldkut-box-body">
