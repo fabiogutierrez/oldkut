@@ -222,6 +222,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'search.noResults': 'Nenhum resultado pra essa busca.',
     'search.prompt': 'Digite um nome pra começar a buscar.',
     'search.ariaLabel': 'Buscar',
+    'search.suggestionsHint': 'Algumas pessoas e comunidades pra você conhecer:',
   },
   en: {
     'nav.communities': 'communities',
@@ -436,6 +437,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'search.noResults': 'No results for that search.',
     'search.prompt': 'Type a name to start searching.',
     'search.ariaLabel': 'Search',
+    'search.suggestionsHint': 'Some people and communities to check out:',
   },
   es: {
     'nav.communities': 'comunidades',
@@ -650,6 +652,7 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'search.noResults': 'No hay resultados para esa búsqueda.',
     'search.prompt': 'Escribe un nombre para empezar a buscar.',
     'search.ariaLabel': 'Buscar',
+    'search.suggestionsHint': 'Algunas personas y comunidades para conocer:',
   },
 };
 

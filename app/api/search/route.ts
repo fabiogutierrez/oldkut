@@ -9,11 +9,24 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const term = sanitizeSearchTerm(searchParams.get('q') ?? '');
 
-  if (!term) {
-    return NextResponse.json({ people: [], communities: [] });
-  }
-
   const supabase = await createClient();
+
+  if (!term) {
+    const [{ data: peopleRaw }, { data: communitiesRaw }] = await Promise.all([
+      supabase.from('oldkut_profiles').select('user_id, username, display_name, photo_url').order('created_at', { ascending: false }).limit(8),
+      supabase
+        .from('oldkut_communities')
+        .select('id, name, description, photo_url, is_private')
+        .order('created_at', { ascending: false })
+        .limit(8),
+    ]);
+
+    return NextResponse.json({
+      people: peopleRaw ?? [],
+      communities: communitiesRaw ?? [],
+      suggested: true,
+    });
+  }
 
   const [{ data: peopleRaw }, { data: communitiesRaw }] = await Promise.all([
     supabase
@@ -31,5 +44,6 @@ export async function GET(request: Request) {
   return NextResponse.json({
     people: peopleRaw ?? [],
     communities: communitiesRaw ?? [],
+    suggested: false,
   });
 }

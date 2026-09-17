@@ -24,6 +24,7 @@ export default function SearchBox() {
   const [people, setPeople] = useState<PersonResult[]>([]);
   const [communities, setCommunities] = useState<CommunityResult[]>([]);
   const [searched, setSearched] = useState(false);
+  const [suggested, setSuggested] = useState(false);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const requestIdRef = useRef(0);
 
@@ -31,23 +32,19 @@ export default function SearchBox() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
     const term = query.trim();
-    if (!term) {
-      setPeople([]);
-      setCommunities([]);
-      setSearched(false);
-      return;
-    }
+    const delay = term ? 250 : 0;
 
     debounceRef.current = setTimeout(async () => {
       const requestId = ++requestIdRef.current;
       const res = await fetch(`/api/search?q=${encodeURIComponent(term)}`);
       if (requestId !== requestIdRef.current) return;
-      const data = await res.json().catch(() => ({ people: [], communities: [] }));
+      const data = await res.json().catch(() => ({ people: [], communities: [], suggested: false }));
       if (requestId !== requestIdRef.current) return;
       setPeople(data.people ?? []);
       setCommunities(data.communities ?? []);
+      setSuggested(Boolean(data.suggested));
       setSearched(true);
-    }, 250);
+    }, delay);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
@@ -79,10 +76,14 @@ export default function SearchBox() {
         </div>
       </div>
 
-      {!query.trim() && <p style={{ fontSize: 13, color: '#666', textAlign: 'center', marginTop: 20 }}>{t('search.prompt')}</p>}
+      {searched && !hasResults && (
+        <p style={{ fontSize: 13, color: '#666', textAlign: 'center', marginTop: 20 }}>
+          {query.trim() ? t('search.noResults') : t('search.prompt')}
+        </p>
+      )}
 
-      {query.trim() && searched && !hasResults && (
-        <p style={{ fontSize: 13, color: '#666', textAlign: 'center', marginTop: 20 }}>{t('search.noResults')}</p>
+      {suggested && hasResults && (
+        <p style={{ fontSize: 13, color: '#666', margin: '0 0 10px' }}>{t('search.suggestionsHint')}</p>
       )}
 
       {people.length > 0 && (
