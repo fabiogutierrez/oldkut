@@ -91,6 +91,18 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'profile.visitsTitle': 'Quem visitou meu perfil',
     'profile.visitsEmpty': 'Ninguém visitou seu perfil ainda.',
     'profile.visitsCount': 'visitas no total',
+
+    'friend.mutualSingular': 'amigo em comum',
+    'friend.mutualPlural': 'amigos em comum',
+
+    'streak.daySingular': 'dia seguido',
+    'streak.dayPlural': 'dias seguidos',
+
+    'memory.title': 'Relembrando',
+    'memory.prefix': 'Há ',
+    'memory.yearSingular': 'ano',
+    'memory.yearPlural': 'anos',
+    'memory.suffix': '',
     'profile.submitCreate': 'Criar perfil',
     'profile.submitEdit': 'Salvar alterações',
     'profile.saving': 'Salvando...',
@@ -293,6 +305,18 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'profile.visitsTitle': 'Who visited my profile',
     'profile.visitsEmpty': "No one has visited your profile yet.",
     'profile.visitsCount': 'total visits',
+
+    'friend.mutualSingular': 'mutual friend',
+    'friend.mutualPlural': 'mutual friends',
+
+    'streak.daySingular': 'day in a row',
+    'streak.dayPlural': 'days in a row',
+
+    'memory.title': 'Memories',
+    'memory.prefix': '',
+    'memory.yearSingular': 'year',
+    'memory.yearPlural': 'years',
+    'memory.suffix': ' ago',
     'profile.submitCreate': 'Create profile',
     'profile.submitEdit': 'Save changes',
     'profile.saving': 'Saving...',
@@ -495,6 +519,18 @@ const dictionaries: Record<Locale, Record<string, string>> = {
     'profile.visitsTitle': 'Quién visitó mi perfil',
     'profile.visitsEmpty': 'Todavía nadie visitó tu perfil.',
     'profile.visitsCount': 'visitas en total',
+
+    'friend.mutualSingular': 'amigo en común',
+    'friend.mutualPlural': 'amigos en común',
+
+    'streak.daySingular': 'día seguido',
+    'streak.dayPlural': 'días seguidos',
+
+    'memory.title': 'Recordando',
+    'memory.prefix': 'Hace ',
+    'memory.yearSingular': 'año',
+    'memory.yearPlural': 'años',
+    'memory.suffix': '',
     'profile.submitCreate': 'Crear perfil',
     'profile.submitEdit': 'Guardar cambios',
     'profile.saving': 'Guardando...',

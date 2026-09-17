@@ -11,6 +11,9 @@ import FriendsList from '@/components/FriendsList';
 import ProfileCommunities from '@/components/ProfileCommunities';
 import ProfileSidebarActions from '@/components/ProfileSidebarActions';
 import ProfileVisits from '@/components/ProfileVisits';
+import ProfileStreak from '@/components/ProfileStreak';
+import MutualFriendsHint from '@/components/MutualFriendsHint';
+import MemoryCard from '@/components/MemoryCard';
 
 interface ScrapAuthor {
   username: string | null;
@@ -84,6 +87,23 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
       );
   }
 
+  let loginStreak: number = profile.login_streak ?? 0;
+
+  if (isOwnProfile) {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (profile.last_login_date !== todayStr) {
+      let newStreak = 1;
+      if (profile.last_login_date) {
+        const diffDays = Math.round(
+          (new Date(todayStr).getTime() - new Date(profile.last_login_date).getTime()) / 86400000
+        );
+        if (diffDays === 1) newStreak = (profile.login_streak ?? 0) + 1;
+      }
+      await supabase.from('oldkut_profiles').update({ last_login_date: todayStr, login_streak: newStreak }).eq('user_id', profile.user_id);
+      loginStreak = newStreak;
+    }
+  }
+
   const scraps = ((scrapsRaw as unknown as ScrapRow[]) ?? []).map((s) => ({
     id: s.id,
     message: s.message,
@@ -104,8 +124,31 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
     authorPhotoUrl: t.author?.photo_url ?? null,
   }));
 
+  let memory: { message: string; authorDisplayName: string; authorUsername: string; yearsAgo: number } | null = null;
+
+  if (isOwnProfile) {
+    const today = new Date();
+    const findMemory = (items: { message: string; authorDisplayName: string; authorUsername: string; createdAt: string }[]) => {
+      for (const item of items) {
+        const d = new Date(item.createdAt);
+        if (d.getUTCMonth() === today.getUTCMonth() && d.getUTCDate() === today.getUTCDate() && d.getUTCFullYear() !== today.getUTCFullYear()) {
+          return {
+            message: item.message,
+            authorDisplayName: item.authorDisplayName,
+            authorUsername: item.authorUsername,
+            yearsAgo: today.getUTCFullYear() - d.getUTCFullYear(),
+          };
+        }
+      }
+      return null;
+    };
+
+    memory = findMemory(scraps) ?? findMemory(testimonials);
+  }
+
   let friends: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
   let communities: { id: string; name: string; photoUrl: string | null }[] = [];
+  let mutualFriends: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
   let visitCount = 0;
   let visitors: { userId: string; username: string; displayName: string; photoUrl: string | null }[] = [];
 
@@ -161,14 +204,30 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
       .map((c) => c.community)
       .filter((c): c is { id: string; name: string; photo_url: string | null } => c !== null)
       .map((c) => ({ id: c.id, name: c.name, photoUrl: c.photo_url }));
+
+    if (!isOwnProfile && user && friends.length > 0) {
+      const [{ data: viewerAsRequester }, { data: viewerAsAddressee }] = await Promise.all([
+        supabase.from('oldkut_friendships').select('addressee_user_id').eq('requester_user_id', user.id).eq('status', 'accepted'),
+        supabase.from('oldkut_friendships').select('requester_user_id').eq('addressee_user_id', user.id).eq('status', 'accepted'),
+      ]);
+
+      const viewerFriendIds = new Set<string>([
+        ...((viewerAsRequester as { addressee_user_id: string }[] | null) ?? []).map((r) => r.addressee_user_id),
+        ...((viewerAsAddressee as { requester_user_id: string }[] | null) ?? []).map((r) => r.requester_user_id),
+      ]);
+
+      mutualFriends = friends.filter((f) => viewerFriendIds.has(f.userId));
+    }
   }
 
   return (
     <div className="oldkut-layout">
       <div className="oldkut-sidebar">
         <ProfileCard profile={profile} />
+        {isOwnProfile && <ProfileStreak streak={loginStreak} />}
         {isOwnProfile && <ProfileSidebarActions username={username} />}
         {isOwnProfile && <ProfileVisits totalCount={visitCount} visitors={visitors} />}
+        {!isOwnProfile && <MutualFriendsHint friends={mutualFriends} />}
         {!isOwnProfile && canPost && (
           <div className="oldkut-box">
             <div className="oldkut-box-body">
@@ -180,6 +239,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
       <div className="oldkut-main">
         {canSeePrivateContent ? (
           <>
+            {isOwnProfile && memory && <MemoryCard memory={memory} />}
             <div className="oldkut-columns">
               <div className="oldkut-columns-item">
                 <FriendsList friends={friends} limit={8} viewMoreHref={`/perfil/${username}/amigos`} />
