@@ -228,7 +228,7 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
         {isOwnProfile && <ProfileSidebarActions username={username} />}
         {isOwnProfile && <ProfileVisits totalCount={visitCount} visitors={visitors} />}
         {!isOwnProfile && <MutualFriendsHint friends={mutualFriends} />}
-        {!isOwnProfile && canPost && (
+        {!isOwnProfile && canPost && canSeePrivateContent && (
           <div className="oldkut-box">
             <div className="oldkut-box-body">
               <FriendButton targetUserId={profile.user_id} initialStatus={friendStatus} />
@@ -267,7 +267,10 @@ export default async function PerfilPage({ params }: { params: Promise<{ usernam
           <div className="oldkut-box">
             <div className="oldkut-box-title">{translate(locale, 'profile.privateNoticeTitle')}</div>
             <div className="oldkut-box-body">
-              <p style={{ fontSize: 13, color: '#555' }}>{translate(locale, 'profile.privateNoticeBody')}</p>
+              <p style={{ fontSize: 13, color: '#555', marginBottom: canPost && !isOwnProfile ? 12 : 0 }}>
+                {translate(locale, 'profile.privateNoticeBody')}
+              </p>
+              {canPost && !isOwnProfile && <FriendButton targetUserId={profile.user_id} initialStatus={friendStatus} />}
             </div>
           </div>
         )}
