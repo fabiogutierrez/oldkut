@@ -200,7 +200,6 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'search.title': 'Buscar',
     'search.placeholder': 'Buscar pessoas e comunidades...',
-    'search.submit': 'Buscar',
     'search.peopleTitle': 'Pessoas',
     'search.communitiesTitle': 'Comunidades',
     'search.noResults': 'Nenhum resultado pra essa busca.',
@@ -398,7 +397,6 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'search.title': 'Search',
     'search.placeholder': 'Search people and communities...',
-    'search.submit': 'Search',
     'search.peopleTitle': 'People',
     'search.communitiesTitle': 'Communities',
     'search.noResults': 'No results for that search.',
@@ -596,7 +594,6 @@ const dictionaries: Record<Locale, Record<string, string>> = {
 
     'search.title': 'Buscar',
     'search.placeholder': 'Buscar personas y comunidades...',
-    'search.submit': 'Buscar',
     'search.peopleTitle': 'Personas',
     'search.communitiesTitle': 'Comunidades',
     'search.noResults': 'No hay resultados para esa búsqueda.',
